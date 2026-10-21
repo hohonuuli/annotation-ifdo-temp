@@ -29,7 +29,7 @@ changes from the draft using the draft's names.
 | 0.9 | 2026-10-21 | Added an optional `image-datetime` (capture time) to `annotation-set-images` entries. It is the same instant as iFDO's `image-datetime` and VARS's `recorded_timestamp`, and maps to Darwin Core `eventDate`. It is optional with an iFDO and recommended without one. The general video case is not covered. |
 | 0.10 | 2026-10-21 | Formally defined the top-level containers `label-set` and `annotation-set` in a new [File structure](#file-structure) section: at most one of each per file, a bundled label set must be one the annotation set uses, other top-level keys are reserved, and each container has a minimum set of required attributes. Added `label-set-standard-version` and `annotation-set-standard-version`. Added serialization rules and the reasons for not using iFDO's header and items layout. Added open issue 11 (requirement levels and a schema). |
 | 0.11 | 2026-10-21 | Added a Level column (REQUIRED / RECOMMENDED / OPTIONAL / conditional) to every attribute in Tables 1–4, replacing the 0.10 minimum. Added a draft JSON Schema, [annotation-standard.schema.json](annotation-standard.schema.json), and listed the checks it cannot make. Resolved open issue 11, and added open issue 12 (local extensions). |
-| 0.12 | 2026-10-21 | Gathered every attribute into the tables at the end of the document. Added [Table 5](#table-5-model-attributes) (model attributes), [Table 6](#table-6-image-attributes) (image attributes), [Table 7](#table-7-review-attributes) (review attributes), [Table 8](#table-8-mask-keys) (mask keys) [Table 9](#table-9-name-and-uri-object) (`{name, uri}` object) and [Table 10](#table-10-top-level-containers) (top-level containers), with levels and Darwin Core, iFDO, COCO and VARS terms where they apply. The attribute tables inside the sections, including the model, image, review and mask tables and the per-section annotation tables, are replaced by links to the end tables. Their extra detail was merged into Table 4. No attribute rules changed. |
+| 0.12 | 2026-10-21 | Gathered every attribute into the tables at the end of the document. Added [Table 5](#table-5-model-attributes) (model attributes), [Table 6](#table-6-image-attributes) (image attributes), [Table 7](#table-7-review-attributes) (review attributes), [Table 8](#table-8-mask-keys) (mask keys) [Table 9](#table-9-name-and-uri-object) (`{name, uri}` object) and [Table 10](#table-10-top-level-containers) (top-level containers), with levels and Darwin Core, iFDO, COCO and VARS terms where they apply. The attribute tables inside the sections, including the model, image, review and mask tables and the per-section annotation tables, are replaced by links to the end tables. Their extra detail was merged into Table 4. No attribute rules changed. Marked each attribute as <sup>N</sup> (new) or <sup>M</sup> (modified) against the draft, and listed the removed attributes, in [Attribute tables](#attribute-tables). |
 
 ## Structure
 
@@ -1222,6 +1222,30 @@ annotation-set-annotations:
 
 ---
 
+## Attribute tables
+
+Tables 1–10 define every attribute in the standard. Tables 1–4 correspond to the draft's
+Tables 1–4. A marker after an attribute name compares it with the draft:
+
+- <sup>N</sup> **New:** not in the draft.
+- <sup>M</sup> **Modified:** in the draft, but its name or allowed values have changed. The
+  draft's name is in the [rename table](#renamed-attributes).
+- **No marker:** unchanged from the draft, apart from a clearer description or an added
+  requirement level.
+
+Tables 5–10 are new, so every row in them is marked <sup>N</sup>.
+
+These draft attributes were removed:
+
+- `annotation-machine-algorithm`, and the set-level `annotation-machine-training-images`,
+  `-training-annotations`, `-validation-images` and `-validation-annotations`. Replaced by
+  `annotation-set-models` and Table 5 (0.5).
+- `annotation-machine-detect-or-classify`. It is now derived from the model fields (0.5).
+- `annotation-human-reviewer` and `annotation-human-reviewer-ID`. Replaced by
+  `annotation-reviews` and Table 7 (0.6).
+- `image-filename` on the annotation. Replaced by `annotation-image-uuid`, and moved to Table 6
+  (0.3).
+
 ## Table 1. Label set attributes
 
 Names follow the [naming rules](#naming-rules) (revision 0.7). The draft's names are in the
@@ -1229,23 +1253,23 @@ Names follow the [naming rules](#naming-rules) (revision 0.7). The draft's names
 
 | Attribute name | Description | Allowed value(s) | Level | DarwinCore term |
 | --- | --- | --- | --- | --- |
-| label-set-standard-version | **New in 0.10.** The revision of this standard the label set follows. See [Standard version](#standard-version). | Quoted text, e.g. `"0.11"` | REQUIRED | |
+| label-set-standard-version<sup>N</sup> | The revision of this standard the label set follows. See [Standard version](#standard-version). | Quoted text, e.g. `"0.11"` | REQUIRED | |
 | label-set-name | A unique name for the label set. | Text | REQUIRED | |
-| label-set-project | The overarching project context within which the label set was created | `{name, uri}` | RECOMMENDED | projectTitle (name) |
-| label-set-context | The more specific project or expedition or cruise or experiment within which the label set was created. | `{name, uri}` | OPTIONAL | |
-| label-set-abstract | Description of what, when, where, why and how the labels were created. Includes aims, purpose of labels. | Text | RECOMMENDED | |
-| label-set-objective | A general description of the aims and objectives or scope of the label set. | Text | RECOMMENDED | organismScope |
-| label-set-creators | The people who created the label set | List of `{name, uri}` | REQUIRED | |
-| label-set-pi | The principal investigator | `{name, uri}` | RECOMMENDED | |
-| label-set-license | License to use the data (should be FAIR) | `{name, uri}`, e.g. `{name: CC-BY-4.0, uri: https://creativecommons.org/licenses/by/4.0/}` | REQUIRED | UsagePolicy |
-| label-set-copyright | Copyright sentence / contact person or office | Text | RECOMMENDED | |
-| label-set-uuid | A UUID for the label set | UUID | REQUIRED | |
-| label-set-version | Version of the label set | Text, e.g. `"2"` or `"2.1"` | RECOMMENDED | |
-| label-set-related-material | Papers, websites, software or other documentation associated with the label set | List of DOIs and/or URIs | OPTIONAL | |
-| label-set-doi | DOI for the label set | DOI | OPTIONAL; RECOMMENDED once published | |
-| label-set-catalogue | Link to the catalogue or vocabulary used | URI or DOI | OPTIONAL | |
-| label-set-funding | Funding attribution | Text | OPTIONAL | fundingAttribution |
-| label-set-labels | The labels in the set (Table 2) | List of label entries | REQUIRED | |
+| label-set-project<sup>M</sup> | The overarching project context within which the label set was created | `{name, uri}` | RECOMMENDED | projectTitle (name) |
+| label-set-context<sup>M</sup> | The more specific project or expedition or cruise or experiment within which the label set was created. | `{name, uri}` | OPTIONAL | |
+| label-set-abstract<sup>M</sup> | Description of what, when, where, why and how the labels were created. Includes aims, purpose of labels. | Text | RECOMMENDED | |
+| label-set-objective<sup>M</sup> | A general description of the aims and objectives or scope of the label set. | Text | RECOMMENDED | organismScope |
+| label-set-creators<sup>M</sup> | The people who created the label set | List of `{name, uri}` | REQUIRED | |
+| label-set-pi<sup>M</sup> | The principal investigator | `{name, uri}` | RECOMMENDED | |
+| label-set-license<sup>M</sup> | License to use the data (should be FAIR) | `{name, uri}`, e.g. `{name: CC-BY-4.0, uri: https://creativecommons.org/licenses/by/4.0/}` | REQUIRED | UsagePolicy |
+| label-set-copyright<sup>M</sup> | Copyright sentence / contact person or office | Text | RECOMMENDED | |
+| label-set-uuid<sup>M</sup> | A UUID for the label set | UUID | REQUIRED | |
+| label-set-version<sup>M</sup> | Version of the label set | Text, e.g. `"2"` or `"2.1"` | RECOMMENDED | |
+| label-set-related-material<sup>M</sup> | Papers, websites, software or other documentation associated with the label set | List of DOIs and/or URIs | OPTIONAL | |
+| label-set-doi<sup>M</sup> | DOI for the label set | DOI | OPTIONAL; RECOMMENDED once published | |
+| label-set-catalogue<sup>M</sup> | Link to the catalogue or vocabulary used | URI or DOI | OPTIONAL | |
+| label-set-funding<sup>M</sup> | Funding attribution | Text | OPTIONAL | fundingAttribution |
+| label-set-labels<sup>N</sup> | The labels in the set (Table 2) | List of label entries | REQUIRED | |
 
 ## Table 2. Label attributes
 
@@ -1255,13 +1279,13 @@ does not store AphiaIDs, identification qualifiers or per-label UUIDs on annotat
 
 | Attribute name | Description | Allowed value(s) | Level | DarwinCore term |
 | --- | --- | --- | --- | --- |
-| label-name | Name of the label (can be project-specific) | Text | REQUIRED | organismName |
-| label-parent-name | `label-name` of the parent label in the same label set | Text | OPTIONAL (absent or null for a top-level label) | |
-| label-lowest-taxonomic-name | Most detailed taxonomic identification possible without open nomenclature terms | Text | RECOMMENDED | identification or scientificName |
-| label-lowest-aphia-id | AphiaID of `label-lowest-taxonomic-name` | Integer | RECOMMENDED when `label-lowest-taxonomic-name` is in WoRMS | |
-| label-is-lowest-taxon | `true`: the label is `label-lowest-taxonomic-name` itself. `false`: the label is a category below it, such as a morphotype. | `true`, `false` | REQUIRED when `label-lowest-taxonomic-name` is given | |
-| label-identification-qualifier | Open nomenclature term qualifying `label-lowest-taxonomic-name` | Text | OPTIONAL | identificationQualifier |
-| label-uuid | UUID to tell apart similar label names used in different projects | UUID | REQUIRED | identificationID |
+| label-name<sup>M</sup> | Name of the label (can be project-specific) | Text | REQUIRED | organismName |
+| label-parent-name<sup>M</sup> | `label-name` of the parent label in the same label set | Text | OPTIONAL (absent or null for a top-level label) | |
+| label-lowest-taxonomic-name<sup>M</sup> | Most detailed taxonomic identification possible without open nomenclature terms | Text | RECOMMENDED | identification or scientificName |
+| label-lowest-aphia-id<sup>M</sup> | AphiaID of `label-lowest-taxonomic-name` | Integer | RECOMMENDED when `label-lowest-taxonomic-name` is in WoRMS | |
+| label-is-lowest-taxon<sup>M</sup> | `true`: the label is `label-lowest-taxonomic-name` itself. `false`: the label is a category below it, such as a morphotype. | `true`, `false` | REQUIRED when `label-lowest-taxonomic-name` is given | |
+| label-identification-qualifier<sup>M</sup> | Open nomenclature term qualifying `label-lowest-taxonomic-name` | Text | OPTIONAL | identificationQualifier |
+| label-uuid<sup>M</sup> | UUID to tell apart similar label names used in different projects | UUID | REQUIRED | identificationID |
 
 ## Table 3. Annotation set attributes
 
@@ -1270,40 +1294,40 @@ its cached deployment information (`mission_id`, `platform_name`, `mission_conta
 
 | Attribute name | Description | Allowed values | Level | DarwinCore term |
 | --- | --- | --- | --- | --- |
-| annotation-set-standard-version | **New in 0.10.** The revision of this standard the annotation set follows. See [Standard version](#standard-version). | Quoted text, e.g. `"0.11"` | REQUIRED | |
+| annotation-set-standard-version<sup>N</sup> | The revision of this standard the annotation set follows. See [Standard version](#standard-version). | Quoted text, e.g. `"0.11"` | REQUIRED | |
 | annotation-set-name | A unique name for the annotation set. | Text | REQUIRED | datasetName |
-| annotation-set-project | The overarching project context within which the annotation set was created | `{name, uri}` | RECOMMENDED | Event |
-| annotation-set-context | The more specific project or expedition or cruise or experiment within which the annotation set exists. | `{name, uri}` | RECOMMENDED | |
-| annotation-set-abstract | Description of what, when, where, why and how the annotations were created. Includes aims, purpose of annotation, selection of images/image sets, etc. | Text | REQUIRED | |
-| annotation-set-objective | The aims and objectives, pertaining to biology and method scope. Define the primary and secondary data to be measured and to what precision. | Text | RECOMMENDED | |
-| annotation-set-target-environment | A definition of the habitat or environment to be annotated, including boundaries thereof | Text | OPTIONAL | |
-| annotation-set-target-timescale | A definition of the period, interval or temporal environment to be annotated | Text | OPTIONAL | |
-| annotation-set-curation-protocol | A description of the annotation curation/QAQC steps and results, including which annotations were reviewed and how they were chosen | Text | RECOMMENDED | |
-| annotation-set-creators | The people who made annotations in the set | List of `{name, uri}` | REQUIRED | identifiedBy |
-| annotation-set-pi | The principal investigator | `{name, uri}` | REQUIRED | |
-| annotation-set-license | License to use the data (should be FAIR) | `{name, uri}` | REQUIRED | UsagePolicy |
-| annotation-set-copyright | Copyright sentence / contact person or office | Text | RECOMMENDED | |
-| annotation-set-uuid | Unique identifier | UUID | REQUIRED | datasetID |
-| annotation-set-handle | Persistent URI for the annotation set | URI | OPTIONAL; RECOMMENDED once published | |
+| annotation-set-project<sup>M</sup> | The overarching project context within which the annotation set was created | `{name, uri}` | RECOMMENDED | Event |
+| annotation-set-context<sup>M</sup> | The more specific project or expedition or cruise or experiment within which the annotation set exists. | `{name, uri}` | RECOMMENDED | |
+| annotation-set-abstract<sup>M</sup> | Description of what, when, where, why and how the annotations were created. Includes aims, purpose of annotation, selection of images/image sets, etc. | Text | REQUIRED | |
+| annotation-set-objective<sup>M</sup> | The aims and objectives, pertaining to biology and method scope. Define the primary and secondary data to be measured and to what precision. | Text | RECOMMENDED | |
+| annotation-set-target-environment<sup>M</sup> | A definition of the habitat or environment to be annotated, including boundaries thereof | Text | OPTIONAL | |
+| annotation-set-target-timescale<sup>M</sup> | A definition of the period, interval or temporal environment to be annotated | Text | OPTIONAL | |
+| annotation-set-curation-protocol<sup>M</sup> | A description of the annotation curation/QAQC steps and results, including which annotations were reviewed and how they were chosen | Text | RECOMMENDED | |
+| annotation-set-creators<sup>M</sup> | The people who made annotations in the set | List of `{name, uri}` | REQUIRED | identifiedBy |
+| annotation-set-pi<sup>M</sup> | The principal investigator | `{name, uri}` | REQUIRED | |
+| annotation-set-license<sup>M</sup> | License to use the data (should be FAIR) | `{name, uri}` | REQUIRED | UsagePolicy |
+| annotation-set-copyright<sup>M</sup> | Copyright sentence / contact person or office | Text | RECOMMENDED | |
+| annotation-set-uuid<sup>M</sup> | Unique identifier | UUID | REQUIRED | datasetID |
+| annotation-set-handle<sup>M</sup> | Persistent URI for the annotation set | URI | OPTIONAL; RECOMMENDED once published | |
 | annotation-set-version | Version of the annotation set | Text | RECOMMENDED | |
-| annotation-set-image-set-names | Names of the image sets examined | List of Text | RECOMMENDED | eventID |
-| annotation-set-image-set-uuids | UUIDs of the image sets examined | List of UUIDs | REQUIRED unless `annotation-set-image-metadata` is `none`; then absent | |
-| annotation-set-image-set-handles | Handles of the image sets examined, in the same order as the UUIDs | List of URIs | OPTIONAL | |
-| annotation-set-image-metadata | Whether the annotated images are described by an iFDO. `ifdo` (the default): yes. `none`: no iFDO exists, and the `annotation-set-images` entries are the only image records. | `ifdo`, `none` | OPTIONAL (default `ifdo`) | |
-| annotation-set-images | One entry per annotated image, with its UUID, image set, filename and pixel width and height. See [Referencing the annotated image](#referencing-the-annotated-image). | List of image entries | REQUIRED | |
-| annotation-set-label-set-names | Names of the label sets used | List of Text | RECOMMENDED | |
-| annotation-set-label-set-uuids | UUIDs of the label sets used | List of UUIDs | REQUIRED | |
-| annotation-set-connected-set-uuids | UUIDs of connected annotation sets, for example sets for habitats or litter | List of UUIDs | OPTIONAL | |
-| annotation-set-machine-scope | A description of the scope of machine use, including how it relates to the scope and objectives of the study | Text | REQUIRED if `annotation-set-models` is not empty | |
-| annotation-set-models | One entry per model version used, with the attributes in [Table 5](#table-5-model-attributes). See [Machine-generated annotations](#machine-generated-annotations-models-and-confidence). | List of model entries | REQUIRED if any annotation names a model | |
-| annotation-set-related-material | Papers, websites, software or other documentation associated with the annotation set | List of DOIs and/or URIs | OPTIONAL | associatedReferences |
-| annotation-set-quantitative-or-qualitative | Scope of observations | `qualitative`, `semi-quantitative`, `quantitative` | RECOMMENDED | samplingProtocol |
-| annotation-set-quantification-type | Planned type of quantification | `presence-absence`, `count`, `linear-measurement`, `area-measurement`, `volume-measurement`, `rate` | RECOMMENDED | organismQuantityType |
-| annotation-set-biological-metrics | Planned derived metrics (e.g., abundance, diversity, biomass, rate) | Text | OPTIONAL | |
-| annotation-set-biological-stats | Description of desired statistical comparison (including sampling units, replicates, etc.) | Text | OPTIONAL | |
-| annotation-set-obis-datasets | DOIs of OBIS datasets archived from these annotations | List of DOIs | OPTIONAL | associatedReferences |
-| annotation-set-funding | Details of the funding for the annotations | Text | OPTIONAL | |
-| annotation-set-annotations | The annotations in the set (Table 4) | List of annotation entries | REQUIRED (may be empty) | |
+| annotation-set-image-set-names<sup>M</sup> | Names of the image sets examined | List of Text | RECOMMENDED | eventID |
+| annotation-set-image-set-uuids<sup>M</sup> | UUIDs of the image sets examined | List of UUIDs | REQUIRED unless `annotation-set-image-metadata` is `none`; then absent | |
+| annotation-set-image-set-handles<sup>M</sup> | Handles of the image sets examined, in the same order as the UUIDs | List of URIs | OPTIONAL | |
+| annotation-set-image-metadata<sup>N</sup> | Whether the annotated images are described by an iFDO. `ifdo` (the default): yes. `none`: no iFDO exists, and the `annotation-set-images` entries are the only image records. | `ifdo`, `none` | OPTIONAL (default `ifdo`) | |
+| annotation-set-images<sup>N</sup> | One entry per annotated image, with its UUID, image set, filename and pixel width and height. See [Referencing the annotated image](#referencing-the-annotated-image). | List of image entries | REQUIRED | |
+| annotation-set-label-set-names<sup>M</sup> | Names of the label sets used | List of Text | RECOMMENDED | |
+| annotation-set-label-set-uuids<sup>M</sup> | UUIDs of the label sets used | List of UUIDs | REQUIRED | |
+| annotation-set-connected-set-uuids<sup>M</sup> | UUIDs of connected annotation sets, for example sets for habitats or litter | List of UUIDs | OPTIONAL | |
+| annotation-set-machine-scope<sup>M</sup> | A description of the scope of machine use, including how it relates to the scope and objectives of the study | Text | REQUIRED if `annotation-set-models` is not empty | |
+| annotation-set-models<sup>N</sup> | One entry per model version used, with the attributes in [Table 5](#table-5-model-attributes). See [Machine-generated annotations](#machine-generated-annotations-models-and-confidence). | List of model entries | REQUIRED if any annotation names a model | |
+| annotation-set-related-material<sup>M</sup> | Papers, websites, software or other documentation associated with the annotation set | List of DOIs and/or URIs | OPTIONAL | associatedReferences |
+| annotation-set-quantitative-or-qualitative<sup>M</sup> | Scope of observations | `qualitative`, `semi-quantitative`, `quantitative` | RECOMMENDED | samplingProtocol |
+| annotation-set-quantification-type<sup>M</sup> | Planned type of quantification | `presence-absence`, `count`, `linear-measurement`, `area-measurement`, `volume-measurement`, `rate` | RECOMMENDED | organismQuantityType |
+| annotation-set-biological-metrics<sup>M</sup> | Planned derived metrics (e.g., abundance, diversity, biomass, rate) | Text | OPTIONAL | |
+| annotation-set-biological-stats<sup>M</sup> | Description of desired statistical comparison (including sampling units, replicates, etc.) | Text | OPTIONAL | |
+| annotation-set-obis-datasets<sup>M</sup> | DOIs of OBIS datasets archived from these annotations | List of DOIs | OPTIONAL | associatedReferences |
+| annotation-set-funding<sup>M</sup> | Details of the funding for the annotations | Text | OPTIONAL | |
+| annotation-set-annotations<sup>N</sup> | The annotations in the set (Table 4) | List of annotation entries | REQUIRED (may be empty) | |
 
 ## Table 4. Annotation attributes
 
@@ -1314,24 +1338,24 @@ snake_case, except `observation_group`, which is `group`.
 | Attribute name | Description | Allowed value(s) | Level | DarwinCore term | BIIGLE term | VARS term (corrected) | SQUIDLE+ term |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | annotation-uuid | Unique identifier of the annotation | UUID | REQUIRED | occurrenceID | Annotation ID | `observations.uuid` (`observation_uuid` in the API). Each localization association also has its own `uuid`. | |
-| annotation-image-uuid | The `image-uuid` of the annotated file. It MUST match an entry in the set's `annotation-set-images`. | UUID | REQUIRED | ac:isROIOf → the media record's identifier | Image filename | `image_references.uuid`, taken from the localization JSON's `image_reference_uuid` key. The filename corresponds to `image_references.url`. The image belongs to the imaged moment, not the observation. For video, the frame is identified by `video_reference_uuid` plus `recorded_timestamp`, `elapsed_time_millis` or `timecode`. | MediaObject |
+| annotation-image-uuid<sup>N</sup> | The `image-uuid` of the annotated file. It MUST match an entry in the set's `annotation-set-images`. | UUID | REQUIRED | ac:isROIOf → the media record's identifier | Image filename | `image_references.uuid`, taken from the localization JSON's `image_reference_uuid` key. The filename corresponds to `image_references.url`. The image belongs to the imaged moment, not the observation. For video, the frame is identified by `video_reference_uuid` plus `recorded_timestamp`, `elapsed_time_millis` or `timecode`. | MediaObject |
 | annotation-human-or-machine | Whether the annotation was made by a human, a machine or a combination. It MUST agree with the model fields (see [Rules](#rules)). | `human`, `algorithm`, `combination` | REQUIRED | basisOfRecord: HumanObservation or MachineObservation | | No field. Machine-generated localizations carry a `generator` key in their JSON. | |
-| annotation-detection-model | `model-id` of the model that produced the shape ([Table 5](#table-5-model-attributes)). Null if a human drew it, or if the shape is `whole-image`. | Text (a `model-id`) or null | REQUIRED (may be null) | | | `generator` key in the localization JSON | |
-| annotation-detection-confidence | The detection model's score for the shape (e.g. objectness) | Number in [0, 1] or null | OPTIONAL; null or absent when the model is null | | | | |
-| annotation-classification-model | `model-id` of the model that produced the label ([Table 5](#table-5-model-attributes)). Null if a human chose it. | Text (a `model-id`) or null | REQUIRED (may be null) | identifiedBy (model name) | | `generator`, if the concept was not changed by a human | |
-| annotation-classification-confidence | The classification model's score for the assigned label | Number in [0, 1] or null | RECOMMENDED when the model is set; null or absent otherwise | | | `confidence` in the localization JSON ÷ 100 | |
-| annotation-classification-alternatives | The model's other top-ranked labels, best first, each with its score. Useful for review and for training. | List of `{label-name, confidence}`; `label-name` is text and `confidence` is a number in [0, 1], both REQUIRED | OPTIONAL | | | | |
-| annotation-human-creators | The people who did the human steps of the annotation | List of `{name, uri}` | REQUIRED unless `annotation-human-or-machine` is `algorithm`; then empty or absent | recordedBy; recordedByID | firstname, lastname; ID of the user who created/attached the annotation label | `observations.observer` (a VARS username, not a name or ORCID) | |
+| annotation-detection-model<sup>N</sup> | `model-id` of the model that produced the shape ([Table 5](#table-5-model-attributes)). Null if a human drew it, or if the shape is `whole-image`. | Text (a `model-id`) or null | REQUIRED (may be null) | | | `generator` key in the localization JSON | |
+| annotation-detection-confidence<sup>N</sup> | The detection model's score for the shape (e.g. objectness) | Number in [0, 1] or null | OPTIONAL; null or absent when the model is null | | | | |
+| annotation-classification-model<sup>N</sup> | `model-id` of the model that produced the label ([Table 5](#table-5-model-attributes)). Null if a human chose it. | Text (a `model-id`) or null | REQUIRED (may be null) | identifiedBy (model name) | | `generator`, if the concept was not changed by a human | |
+| annotation-classification-confidence<sup>N</sup> | The classification model's score for the assigned label | Number in [0, 1] or null | RECOMMENDED when the model is set; null or absent otherwise | | | `confidence` in the localization JSON ÷ 100 | |
+| annotation-classification-alternatives<sup>N</sup> | The model's other top-ranked labels, best first, each with its score. Useful for review and for training. | List of `{label-name, confidence}`; `label-name` is text and `confidence` is a number in [0, 1], both REQUIRED | OPTIONAL | | | | |
+| annotation-human-creators<sup>M</sup> | The people who did the human steps of the annotation | List of `{name, uri}` | REQUIRED unless `annotation-human-or-machine` is `algorithm`; then empty or absent | recordedBy; recordedByID | firstname, lastname; ID of the user who created/attached the annotation label | `observations.observer` (a VARS username, not a name or ORCID) | |
 | annotation-creation-datetime | Date and time the annotation was made | ISO 8601 date-time, UTC | REQUIRED | dateIdentified | Creation date | `observations.observation_timestamp`. **Not** `recorded_timestamp`, which is when the frame was captured and maps to `image-datetime`. | |
 | annotation-label-name | Label assigned to the annotation: a `label-name` from one of the set's label sets | Text | REQUIRED | organismName | Label name | `observations.concept` (knowledgebase concept name, stored as free text) | Label |
-| annotation-shape-name | Shape of the annotation. See [Annotation shapes and coordinates](#annotation-shapes-and-coordinates). | `single-pixel`, `polyline`, `polygon`, `rectangle`, `circle`, `ellipse`, `whole-image`, `mask` | REQUIRED | measurementType (under review, open issue 9) | Annotation shape name | `associations.link_name`: `bounding box`, `localization-point`, `localization-line`, `localization-polygon` | |
-| annotation-coordinates | Pixel coordinates of the shape's vertices in the referenced image. The origin (0, 0) is the top-left corner of the image; x is to the right and y is down. See [Annotation shapes and coordinates](#annotation-shapes-and-coordinates). | Array of arrays of numbers, `[[x1, y1, x2, y2, ...]]`; one inner array for a still image | REQUIRED | Derived: ac:xFrac, ac:yFrac, ac:widthFrac, ac:heightFrac, ac:radius | Annotation points | `associations.link_value` JSON, in pixels with origin at top left. Bounding box: `{"x", "y", "width", "height"}`. Other shapes: `{"x": [...], "y": [...]}` | Point, Polygon, x, y, t |
-| annotation-mask | The per-pixel mask, as COCO RLE. Required when the shape is `mask`, and absent otherwise. See [Pixel masks](#pixel-masks). | `{encoding, width, height, counts}` | REQUIRED when the shape is `mask`; absent otherwise | | | Proposed `localizations` columns `mask_encoding`, `mask_data`, `mask_width_pixels`, `mask_height_pixels` | |
+| annotation-shape-name<sup>M</sup> | Shape of the annotation. See [Annotation shapes and coordinates](#annotation-shapes-and-coordinates). | `single-pixel`, `polyline`, `polygon`, `rectangle`, `circle`, `ellipse`, `whole-image`, `mask` | REQUIRED | measurementType (under review, open issue 9) | Annotation shape name | `associations.link_name`: `bounding box`, `localization-point`, `localization-line`, `localization-polygon` | |
+| annotation-coordinates<sup>M</sup> | Pixel coordinates of the shape's vertices in the referenced image. The origin (0, 0) is the top-left corner of the image; x is to the right and y is down. See [Annotation shapes and coordinates](#annotation-shapes-and-coordinates). | Array of arrays of numbers, `[[x1, y1, x2, y2, ...]]`; one inner array for a still image | REQUIRED | Derived: ac:xFrac, ac:yFrac, ac:widthFrac, ac:heightFrac, ac:radius | Annotation points | `associations.link_value` JSON, in pixels with origin at top left. Bounding box: `{"x", "y", "width", "height"}`. Other shapes: `{"x": [...], "y": [...]}` | Point, Polygon, x, y, t |
+| annotation-mask<sup>N</sup> | The per-pixel mask, as COCO RLE. Required when the shape is `mask`, and absent otherwise. See [Pixel masks](#pixel-masks). | `{encoding, width, height, counts}` | REQUIRED when the shape is `mask`; absent otherwise | | | Proposed `localizations` columns `mask_encoding`, `mask_data`, `mask_width_pixels`, `mask_height_pixels` | |
 | annotation-measurement | A measurement of the object, in pixels | Number | OPTIONAL | measurementValue | | No dedicated field. Could be an association. | |
-| annotation-reviews | The human reviews of this annotation, oldest first, with the attributes in [Table 7](#table-7-review-attributes). An empty list or an absent attribute means it has not been reviewed. See [Review provenance](#review-provenance). | List of review entries | OPTIONAL | identifiedBy and dateIdentified after a `modified` review; identificationRemarks | | `verifier` key in the localization JSON → one `accepted` review with no time | |
-| annotation-review-status | The `review-outcome` of the latest review, or `unreviewed` | `unreviewed`, `accepted`, `modified`, `rejected`, `uncertain` | REQUIRED if `annotation-reviews` is not empty; otherwise OPTIONAL (absent means `unreviewed`) | identificationVerificationStatus | | `accepted` if `verifier` is present; otherwise `unreviewed` | |
+| annotation-reviews<sup>N</sup> | The human reviews of this annotation, oldest first, with the attributes in [Table 7](#table-7-review-attributes). An empty list or an absent attribute means it has not been reviewed. See [Review provenance](#review-provenance). | List of review entries | OPTIONAL | identifiedBy and dateIdentified after a `modified` review; identificationRemarks | | `verifier` key in the localization JSON → one `accepted` review with no time | |
+| annotation-review-status<sup>N</sup> | The `review-outcome` of the latest review, or `unreviewed` | `unreviewed`, `accepted`, `modified`, `rejected`, `uncertain` | REQUIRED if `annotation-reviews` is not empty; otherwise OPTIONAL (absent means `unreviewed`) | identificationVerificationStatus | | `accepted` if `verifier` is present; otherwise `unreviewed` | |
 | annotation-machine-training-validation | Whether this annotation was used to train or validate a model | `training`, `validation` | OPTIONAL | | | `tags: ["training"]` in some bounding-box JSON. No validation marker. | |
-| annotation-additional-info | Additional comments or observations | Text | OPTIONAL | identificationRemarks or occurrenceRemarks | Additional attributes of the image | `associations` (`link_name \| to_concept \| link_value`), e.g. `audio-comment \| nil \| <text>` | Tags; Comment for annotations (draft shows `ASSOCIATIONS` here, which appears swapped with VARS; SQUIDLE+ authors to confirm) |
+| annotation-additional-info<sup>M</sup> | Additional comments or observations | Text | OPTIONAL | identificationRemarks or occurrenceRemarks | Additional attributes of the image | `associations` (`link_name \| to_concept \| link_value`), e.g. `audio-comment \| nil \| <text>` | Tags; Comment for annotations (draft shows `ASSOCIATIONS` here, which appears swapped with VARS; SQUIDLE+ authors to confirm) |
 
 VARS observation fields with no attribute in the standard: `activity` (e.g. descent, transect),
 `observation_group` (e.g. ROV, AUV, images), `duration_millis`, the video time indices, and the
@@ -1350,20 +1374,20 @@ BIIGLE (MAIA) and SQUIDLE+ equivalents are to confirm.
 
 | Attribute name | Description | Allowed value(s) | Level | DarwinCore term | VARS term |
 | --- | --- | --- | --- | --- | --- |
-| model-id | Identifier that annotations use to refer to this entry. Unique within the annotation set. | Text, e.g. `mbari452k_yolov8` | REQUIRED | | `generator` key in the localization JSON (one entry per distinct value) |
-| model-name | Name of the model or architecture | Text, e.g. `YOLOv8m` | REQUIRED | identifiedBy (with `model-version`), when the model chose the label | No field. The exporter uses the `generator` value. |
-| model-version | Version of the trained weights. Use `unknown` only when converting legacy data that did not record it. | Text | REQUIRED | identifiedBy (with `model-name`) | No field. `unknown` unless known. |
-| model-task | What the model produces | `detection`, `classification`, `detection+classification`, `segmentation` | REQUIRED | | No field. Usually `detection+classification`. |
-| model-handle | Persistent link to the weights or the model card (DOI, Hugging Face, FathomNet model zoo, etc.) | URI or DOI | RECOMMENDED | identificationReferences | |
-| model-weights-sha256 | Hash of the weights file, to identify the exact weights | 64 lowercase hexadecimal characters | OPTIONAL | | |
-| model-description | How the model was applied: inference settings, image size, non-maximum suppression (NMS) settings, tiling, post-processing | Text | OPTIONAL | | |
-| model-score-type | What the confidence means, e.g. "softmax class probability", "YOLO objectness × class probability", "calibrated probability" | Text | REQUIRED if any annotation reports a confidence from this model | | No field. Scores are on a 0–100 scale and are divided by 100 on export. |
-| model-confidence-threshold | Minimum score kept; detections below it were discarded. Needed to interpret absences, because anything scored below the threshold is not in the data. | Number in [0, 1] | RECOMMENDED | | |
-| model-label-set-uuid | The label set the model's output classes belong to, if it differs from the annotation set's label set | UUID | OPTIONAL | | |
-| model-training-images | UUID or link to the training images | UUID or URI | RECOMMENDED | | |
-| model-training-annotations | UUID or link to the training annotations | UUID or URI | RECOMMENDED | | |
-| model-validation-images | UUID or link to the validation images | UUID or URI | OPTIONAL | | |
-| model-validation-annotations | UUID or link to the validation annotations | UUID or URI | OPTIONAL | | |
+| model-id<sup>N</sup> | Identifier that annotations use to refer to this entry. Unique within the annotation set. | Text, e.g. `mbari452k_yolov8` | REQUIRED | | `generator` key in the localization JSON (one entry per distinct value) |
+| model-name<sup>N</sup> | Name of the model or architecture | Text, e.g. `YOLOv8m` | REQUIRED | identifiedBy (with `model-version`), when the model chose the label | No field. The exporter uses the `generator` value. |
+| model-version<sup>N</sup> | Version of the trained weights. Use `unknown` only when converting legacy data that did not record it. | Text | REQUIRED | identifiedBy (with `model-name`) | No field. `unknown` unless known. |
+| model-task<sup>N</sup> | What the model produces | `detection`, `classification`, `detection+classification`, `segmentation` | REQUIRED | | No field. Usually `detection+classification`. |
+| model-handle<sup>N</sup> | Persistent link to the weights or the model card (DOI, Hugging Face, FathomNet model zoo, etc.) | URI or DOI | RECOMMENDED | identificationReferences | |
+| model-weights-sha256<sup>N</sup> | Hash of the weights file, to identify the exact weights | 64 lowercase hexadecimal characters | OPTIONAL | | |
+| model-description<sup>N</sup> | How the model was applied: inference settings, image size, non-maximum suppression (NMS) settings, tiling, post-processing | Text | OPTIONAL | | |
+| model-score-type<sup>N</sup> | What the confidence means, e.g. "softmax class probability", "YOLO objectness × class probability", "calibrated probability" | Text | REQUIRED if any annotation reports a confidence from this model | | No field. Scores are on a 0–100 scale and are divided by 100 on export. |
+| model-confidence-threshold<sup>N</sup> | Minimum score kept; detections below it were discarded. Needed to interpret absences, because anything scored below the threshold is not in the data. | Number in [0, 1] | RECOMMENDED | | |
+| model-label-set-uuid<sup>N</sup> | The label set the model's output classes belong to, if it differs from the annotation set's label set | UUID | OPTIONAL | | |
+| model-training-images<sup>N</sup> | UUID or link to the training images | UUID or URI | RECOMMENDED | | |
+| model-training-annotations<sup>N</sup> | UUID or link to the training annotations | UUID or URI | RECOMMENDED | | |
+| model-validation-images<sup>N</sup> | UUID or link to the validation images | UUID or URI | OPTIONAL | | |
+| model-validation-annotations<sup>N</sup> | UUID or link to the validation annotations | UUID or URI | OPTIONAL | | |
 
 ## Table 6. Image attributes
 
@@ -1375,15 +1399,15 @@ to confirm.
 
 | Attribute name | Description | Allowed value(s) | Level | iFDO field | DarwinCore / Audubon Core term | VARS term |
 | --- | --- | --- | --- | --- | --- | --- |
-| image-uuid | The UUID of the annotated file. Annotations refer to it with `annotation-image-uuid`. When there is an iFDO, this is the iFDO `image-uuid`. | UUID | REQUIRED | `image-uuid` | dcterms:identifier of the media record | `image_references.uuid` |
-| image-uuid-source | Where the UUID is recorded. `embedded`: in the file's metadata. `assigned`: only outside the file. See [Images without an embedded UUID, or without an iFDO](#images-without-an-embedded-uuid-or-without-an-ifdo). | `embedded`, `assigned` | REQUIRED | | | `assigned`: VARS does not embed UUIDs in files |
-| image-set-uuid | The image set the image belongs to. It MUST be one of the set's `annotation-set-image-set-uuids`. | UUID | REQUIRED if the annotation set references more than one image set; absent when `annotation-set-image-metadata` is `none` | `image-set-uuid` | | No field |
-| image-filename | The image's key in the iFDO `image-set-items` (a filename or relative path), or its original filename when there is no iFDO. For people to read; not for lookup. | Text | RECOMMENDED | key of `image-set-items` | | Last part of `image_references.url` |
-| image-handle | A URI to download the image | URI | REQUIRED when `annotation-set-image-metadata` is `none` or `image-hash-sha256` is null; otherwise OPTIONAL | `image-handle` | ac:accessURI | `image_references.url` |
-| image-hash-sha256 | The SHA-256 hash of the file. Confirms that the coordinates apply to these exact bytes, and links an assigned UUID to its file. | 64 lowercase hexadecimal characters, or null if the bytes cannot be hashed | REQUIRED when `image-uuid-source` is `assigned`; otherwise OPTIONAL | `image-hash-sha256` | | No field. Computed on export. |
-| image-width-pixels | Width of the file in pixels | Integer > 0 | REQUIRED | none (proposed `image-pixel-width`) | exif:PixelXDimension | `image_references.width_pixels` (nullable; fill in on export) |
-| image-height-pixels | Height of the file in pixels | Integer > 0 | REQUIRED | none (proposed `image-pixel-height`) | exif:PixelYDimension | `image_references.height_pixels` (nullable; fill in on export) |
-| image-datetime | When the image was captured, or when a video started. See [Capture time](#capture-time). | ISO 8601 date-time in UTC, e.g. `2026-06-12T03:15:22.000Z` | OPTIONAL when there is an iFDO, and then MUST be the same instant as the iFDO value; RECOMMENDED when `annotation-set-image-metadata` is `none` | `image-datetime` | eventDate | `imaged_moments.recorded_timestamp` |
+| image-uuid<sup>N</sup> | The UUID of the annotated file. Annotations refer to it with `annotation-image-uuid`. When there is an iFDO, this is the iFDO `image-uuid`. | UUID | REQUIRED | `image-uuid` | dcterms:identifier of the media record | `image_references.uuid` |
+| image-uuid-source<sup>N</sup> | Where the UUID is recorded. `embedded`: in the file's metadata. `assigned`: only outside the file. See [Images without an embedded UUID, or without an iFDO](#images-without-an-embedded-uuid-or-without-an-ifdo). | `embedded`, `assigned` | REQUIRED | | | `assigned`: VARS does not embed UUIDs in files |
+| image-set-uuid<sup>N</sup> | The image set the image belongs to. It MUST be one of the set's `annotation-set-image-set-uuids`. | UUID | REQUIRED if the annotation set references more than one image set; absent when `annotation-set-image-metadata` is `none` | `image-set-uuid` | | No field |
+| image-filename<sup>N</sup> | The image's key in the iFDO `image-set-items` (a filename or relative path), or its original filename when there is no iFDO. For people to read; not for lookup. | Text | RECOMMENDED | key of `image-set-items` | | Last part of `image_references.url` |
+| image-handle<sup>N</sup> | A URI to download the image | URI | REQUIRED when `annotation-set-image-metadata` is `none` or `image-hash-sha256` is null; otherwise OPTIONAL | `image-handle` | ac:accessURI | `image_references.url` |
+| image-hash-sha256<sup>N</sup> | The SHA-256 hash of the file. Confirms that the coordinates apply to these exact bytes, and links an assigned UUID to its file. | 64 lowercase hexadecimal characters, or null if the bytes cannot be hashed | REQUIRED when `image-uuid-source` is `assigned`; otherwise OPTIONAL | `image-hash-sha256` | | No field. Computed on export. |
+| image-width-pixels<sup>N</sup> | Width of the file in pixels | Integer > 0 | REQUIRED | none (proposed `image-pixel-width`) | exif:PixelXDimension | `image_references.width_pixels` (nullable; fill in on export) |
+| image-height-pixels<sup>N</sup> | Height of the file in pixels | Integer > 0 | REQUIRED | none (proposed `image-pixel-height`) | exif:PixelYDimension | `image_references.height_pixels` (nullable; fill in on export) |
+| image-datetime<sup>N</sup> | When the image was captured, or when a video started. See [Capture time](#capture-time). | ISO 8601 date-time in UTC, e.g. `2026-06-12T03:15:22.000Z` | OPTIONAL when there is an iFDO, and then MUST be the same instant as the iFDO value; RECOMMENDED when `annotation-set-image-metadata` is `none` | `image-datetime` | eventDate | `imaged_moments.recorded_timestamp` |
 
 ## Table 7. Review attributes
 
@@ -1393,12 +1417,12 @@ rules. BIIGLE (Largo) and SQUIDLE+ equivalents are to confirm.
 
 | Attribute name | Description | Allowed value(s) | Level | DarwinCore term | VARS term |
 | --- | --- | --- | --- | --- | --- |
-| review-reviewer | The reviewer | `{name, uri}` ([Table 9](#table-9-name-and-uri-object)) | REQUIRED | identifiedBy and identifiedByID, after a `modified` review | `verifier` key in the localization JSON (a username, so `name` only) |
-| review-datetime | When the review was made | ISO 8601 date-time in UTC; null only for legacy data that did not record it | REQUIRED (may be null) | dateIdentified, after a `modified` review | No field, so null. The proposed `localizations` table has `verification_timestamp`. |
-| review-outcome | What the reviewer decided | `accepted`, `modified`, `rejected`, `uncertain` | REQUIRED | identificationVerificationStatus, through `annotation-review-status` | `accepted` when `verifier` is present (assumed; open issue 5) |
-| review-changed | Which parts the reviewer changed | List of `label`, `shape` | REQUIRED if `review-outcome` is `modified`; absent otherwise | | No field |
-| review-previous | The changed attributes' values before this review | Object holding any of `annotation-label-name`, `annotation-shape-name`, `annotation-coordinates`, `annotation-mask`, `annotation-detection-model`, `annotation-detection-confidence`, `annotation-classification-model`, `annotation-classification-confidence` | RECOMMENDED if `review-outcome` is `modified`; absent otherwise | | Earlier concept names are in the Envers audit table `observations_AUD` |
-| review-remarks | Free-text notes, e.g. why an annotation was rejected | Text | OPTIONAL | identificationRemarks | No field |
+| review-reviewer<sup>N</sup> | The reviewer | `{name, uri}` ([Table 9](#table-9-name-and-uri-object)) | REQUIRED | identifiedBy and identifiedByID, after a `modified` review | `verifier` key in the localization JSON (a username, so `name` only) |
+| review-datetime<sup>N</sup> | When the review was made | ISO 8601 date-time in UTC; null only for legacy data that did not record it | REQUIRED (may be null) | dateIdentified, after a `modified` review | No field, so null. The proposed `localizations` table has `verification_timestamp`. |
+| review-outcome<sup>N</sup> | What the reviewer decided | `accepted`, `modified`, `rejected`, `uncertain` | REQUIRED | identificationVerificationStatus, through `annotation-review-status` | `accepted` when `verifier` is present (assumed; open issue 5) |
+| review-changed<sup>N</sup> | Which parts the reviewer changed | List of `label`, `shape` | REQUIRED if `review-outcome` is `modified`; absent otherwise | | No field |
+| review-previous<sup>N</sup> | The changed attributes' values before this review | Object holding any of `annotation-label-name`, `annotation-shape-name`, `annotation-coordinates`, `annotation-mask`, `annotation-detection-model`, `annotation-detection-confidence`, `annotation-classification-model`, `annotation-classification-confidence` | RECOMMENDED if `review-outcome` is `modified`; absent otherwise | | Earlier concept names are in the Envers audit table `observations_AUD` |
+| review-remarks<sup>N</sup> | Free-text notes, e.g. why an annotation was rejected | Text | OPTIONAL | identificationRemarks | No field |
 
 ## Table 8. Mask keys
 
@@ -1409,10 +1433,10 @@ plain keys, so the naming prefixes don't apply.
 
 | Key | Description | Allowed value(s) | Level | COCO term | VARS term (proposed `localizations` table) |
 | --- | --- | --- | --- | --- | --- |
-| encoding | The form of `counts`. More encodings may be added later. | `coco-rle` (a list of integers) or `coco-rle-compressed` (a string) | REQUIRED | Whether `segmentation.counts` is a list or a string | `mask_encoding` (`coco_rle`) |
-| width | Mask width in pixels. MUST equal `image-width-pixels`. | Integer > 0 | REQUIRED | `segmentation.size[1]` | `mask_width_pixels` |
-| height | Mask height in pixels. MUST equal `image-height-pixels`. | Integer > 0 | REQUIRED | `segmentation.size[0]` | `mask_height_pixels` |
-| counts | The run lengths: column-major, starting with background, adding up to width × height | List of non-negative integers (`coco-rle`), or a string (`coco-rle-compressed`) | REQUIRED | `segmentation.counts` | `mask_data` (which form is to confirm) |
+| encoding<sup>N</sup> | The form of `counts`. More encodings may be added later. | `coco-rle` (a list of integers) or `coco-rle-compressed` (a string) | REQUIRED | Whether `segmentation.counts` is a list or a string | `mask_encoding` (`coco_rle`) |
+| width<sup>N</sup> | Mask width in pixels. MUST equal `image-width-pixels`. | Integer > 0 | REQUIRED | `segmentation.size[1]` | `mask_width_pixels` |
+| height<sup>N</sup> | Mask height in pixels. MUST equal `image-height-pixels`. | Integer > 0 | REQUIRED | `segmentation.size[0]` | `mask_height_pixels` |
+| counts<sup>N</sup> | The run lengths: column-major, starting with background, adding up to width × height | List of non-negative integers (`coco-rle`), or a string (`coco-rle-compressed`) | REQUIRED | `segmentation.counts` | `mask_data` (which form is to confirm) |
 
 ## Table 9. Name and URI object
 
@@ -1428,8 +1452,8 @@ The `{name, uri}` object used for people and named things, as in iFDO. Added in 
 
 | Key | Description | Allowed value(s) | Level | iFDO term |
 | --- | --- | --- | --- | --- |
-| name | Name of the person, project, context or license | Text, not empty | REQUIRED | `name` |
-| uri | Link to details. For a person, an ORCID, or a `mailto:` URI if there is no ORCID. For a license, the license text, e.g. `https://creativecommons.org/licenses/by/4.0/`. | URI | RECOMMENDED for people and licenses; OPTIONAL otherwise | `uri` |
+| name<sup>N</sup> | Name of the person, project, context or license | Text, not empty | REQUIRED | `name` |
+| uri<sup>N</sup> | Link to details. For a person, an ORCID, or a `mailto:` URI if there is no ORCID. For a license, the license text, e.g. `https://creativecommons.org/licenses/by/4.0/`. | URI | RECOMMENDED for people and licenses; OPTIONAL otherwise | `uri` |
 
 No other keys are allowed.
 
@@ -1441,8 +1465,8 @@ draft's numbering, even though the containers come first in a file.
 
 | Key | Contents | Allowed value(s) | Level | Names in the nested form |
 | --- | --- | --- | --- | --- |
-| label-set | One label set: the Table 1 attributes, with its labels (Table 2) in `label-set-labels` | Object | OPTIONAL, but a file MUST have at least one of `label-set` and `annotation-set` | Unchanged |
-| annotation-set | One annotation set: the Table 3 attributes, with its annotations (Table 4) in `annotation-set-annotations`, its images (Table 6) in `annotation-set-images`, and its models (Table 5) in `annotation-set-models` | Object | OPTIONAL, but a file MUST have at least one of `label-set` and `annotation-set` | Unchanged |
+| label-set<sup>N</sup> | One label set: the Table 1 attributes, with its labels (Table 2) in `label-set-labels` | Object | OPTIONAL, but a file MUST have at least one of `label-set` and `annotation-set` | Unchanged |
+| annotation-set<sup>N</sup> | One annotation set: the Table 3 attributes, with its annotations (Table 4) in `annotation-set-annotations`, its images (Table 6) in `annotation-set-images`, and its models (Table 5) in `annotation-set-models` | Object | OPTIONAL, but a file MUST have at least one of `label-set` and `annotation-set` | Unchanged |
 
 No other top-level keys are allowed. They are reserved for later revisions.
 
