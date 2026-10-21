@@ -1,0 +1,491 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "annotation-standard-0.11.schema.json",
+  "title": "Marine image annotation standard, revision 0.11 (draft)",
+  "description": "JSON Schema for the prefixed (normative) form of refined_standard.md, revision 0.11. It checks structure, types, controlled values and the conditional rules that a schema can express. Cross-references and geometry (e.g. that annotation-image-uuid names an entry in annotation-set-images, or that a polygon is closed) are listed in refined_standard.md under 'What the schema does not check'. The $id is provisional until the standard is published.",
+  "type": "object",
+  "properties": {
+    "label-set": { "$ref": "#/$defs/label-set" },
+    "annotation-set": { "$ref": "#/$defs/annotation-set" }
+  },
+  "anyOf": [
+    { "required": ["label-set"] },
+    { "required": ["annotation-set"] }
+  ],
+  "additionalProperties": false,
+
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+    },
+    "uuids": { "type": "array", "items": { "$ref": "#/$defs/uuid" } },
+    "datetime": {
+      "description": "ISO 8601 / RFC 3339 date-time in UTC, written with a Z.",
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+    },
+    "uri": { "type": "string", "format": "uri" },
+    "doi": { "type": "string", "pattern": "^10\\.[0-9]{4,9}/\\S+$" },
+    "doi-or-uri": {
+      "anyOf": [ { "$ref": "#/$defs/doi" }, { "$ref": "#/$defs/uri" } ]
+    },
+    "uuid-or-uri": {
+      "anyOf": [ { "$ref": "#/$defs/uuid" }, { "$ref": "#/$defs/uri" } ]
+    },
+    "standard-version": {
+      "description": "Revision of this standard, as quoted text, e.g. \"0.11\".",
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+(\\.[0-9]+)?$"
+    },
+    "named": {
+      "description": "A {name, uri} object, as used by iFDO.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "uri": { "$ref": "#/$defs/uri" }
+      },
+      "required": ["name"],
+      "additionalProperties": false
+    },
+    "people": { "type": "array", "items": { "$ref": "#/$defs/named" } },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "nullable-confidence": {
+      "anyOf": [ { "$ref": "#/$defs/confidence" }, { "type": "null" } ]
+    },
+    "nullable-text": { "type": ["string", "null"] },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+
+    "label-set": {
+      "type": "object",
+      "properties": {
+        "label-set-standard-version": { "$ref": "#/$defs/standard-version" },
+        "label-set-name": { "type": "string", "minLength": 1 },
+        "label-set-project": { "$ref": "#/$defs/named" },
+        "label-set-context": { "$ref": "#/$defs/named" },
+        "label-set-abstract": { "type": "string" },
+        "label-set-objective": { "type": "string" },
+        "label-set-creators": { "$ref": "#/$defs/people", "minItems": 1 },
+        "label-set-pi": { "$ref": "#/$defs/named" },
+        "label-set-license": { "$ref": "#/$defs/named" },
+        "label-set-copyright": { "type": "string" },
+        "label-set-uuid": { "$ref": "#/$defs/uuid" },
+        "label-set-version": { "type": "string" },
+        "label-set-related-material": { "type": "array", "items": { "$ref": "#/$defs/doi-or-uri" } },
+        "label-set-doi": { "$ref": "#/$defs/doi" },
+        "label-set-catalogue": { "$ref": "#/$defs/doi-or-uri" },
+        "label-set-funding": { "type": "string" },
+        "label-set-labels": { "type": "array", "items": { "$ref": "#/$defs/label" } }
+      },
+      "required": [
+        "label-set-standard-version", "label-set-name", "label-set-creators",
+        "label-set-license", "label-set-uuid", "label-set-labels"
+      ],
+      "additionalProperties": false
+    },
+
+    "label": {
+      "type": "object",
+      "properties": {
+        "label-name": { "type": "string", "minLength": 1 },
+        "label-parent-name": { "$ref": "#/$defs/nullable-text" },
+        "label-lowest-taxonomic-name": { "$ref": "#/$defs/nullable-text" },
+        "label-lowest-aphia-id": { "type": ["integer", "null"], "minimum": 1 },
+        "label-is-lowest-taxon": { "type": "boolean" },
+        "label-identification-qualifier": { "$ref": "#/$defs/nullable-text" },
+        "label-uuid": { "$ref": "#/$defs/uuid" }
+      },
+      "required": ["label-name", "label-uuid"],
+      "allOf": [
+        {
+          "if": {
+            "properties": { "label-lowest-taxonomic-name": { "type": "string" } },
+            "required": ["label-lowest-taxonomic-name"]
+          },
+          "then": { "required": ["label-is-lowest-taxon"] }
+        }
+      ],
+      "additionalProperties": false
+    },
+
+    "annotation-set": {
+      "type": "object",
+      "properties": {
+        "annotation-set-standard-version": { "$ref": "#/$defs/standard-version" },
+        "annotation-set-name": { "type": "string", "minLength": 1 },
+        "annotation-set-project": { "$ref": "#/$defs/named" },
+        "annotation-set-context": { "$ref": "#/$defs/named" },
+        "annotation-set-abstract": { "type": "string", "minLength": 1 },
+        "annotation-set-objective": { "type": "string" },
+        "annotation-set-target-environment": { "type": "string" },
+        "annotation-set-target-timescale": { "type": "string" },
+        "annotation-set-curation-protocol": { "type": "string" },
+        "annotation-set-creators": { "$ref": "#/$defs/people", "minItems": 1 },
+        "annotation-set-pi": { "$ref": "#/$defs/named" },
+        "annotation-set-license": { "$ref": "#/$defs/named" },
+        "annotation-set-copyright": { "type": "string" },
+        "annotation-set-uuid": { "$ref": "#/$defs/uuid" },
+        "annotation-set-handle": { "$ref": "#/$defs/uri" },
+        "annotation-set-version": { "type": "string" },
+        "annotation-set-image-set-names": { "type": "array", "items": { "type": "string" } },
+        "annotation-set-image-set-uuids": { "$ref": "#/$defs/uuids", "minItems": 1 },
+        "annotation-set-image-set-handles": { "type": "array", "items": { "$ref": "#/$defs/uri" } },
+        "annotation-set-image-metadata": { "enum": ["ifdo", "none"] },
+        "annotation-set-images": { "type": "array", "items": { "$ref": "#/$defs/image" } },
+        "annotation-set-label-set-names": { "type": "array", "items": { "type": "string" } },
+        "annotation-set-label-set-uuids": { "$ref": "#/$defs/uuids", "minItems": 1 },
+        "annotation-set-connected-set-uuids": { "$ref": "#/$defs/uuids" },
+        "annotation-set-machine-scope": { "type": "string" },
+        "annotation-set-models": { "type": "array", "items": { "$ref": "#/$defs/model" } },
+        "annotation-set-related-material": { "type": "array", "items": { "$ref": "#/$defs/doi-or-uri" } },
+        "annotation-set-quantitative-or-qualitative": {
+          "enum": ["qualitative", "semi-quantitative", "quantitative"]
+        },
+        "annotation-set-quantification-type": {
+          "enum": [
+            "presence-absence", "count", "linear-measurement", "area-measurement",
+            "volume-measurement", "rate"
+          ]
+        },
+        "annotation-set-biological-metrics": { "type": "string" },
+        "annotation-set-biological-stats": { "type": "string" },
+        "annotation-set-obis-datasets": { "type": "array", "items": { "$ref": "#/$defs/doi" } },
+        "annotation-set-funding": { "type": "string" },
+        "annotation-set-annotations": { "type": "array", "items": { "$ref": "#/$defs/annotation" } }
+      },
+      "required": [
+        "annotation-set-standard-version", "annotation-set-name", "annotation-set-abstract",
+        "annotation-set-creators", "annotation-set-pi", "annotation-set-license",
+        "annotation-set-uuid", "annotation-set-images", "annotation-set-label-set-uuids",
+        "annotation-set-annotations"
+      ],
+      "allOf": [
+        {
+          "description": "No iFDO: no image set UUIDs; each image needs a hash (or null) and a handle, and no image-set-uuid.",
+          "if": {
+            "properties": { "annotation-set-image-metadata": { "const": "none" } },
+            "required": ["annotation-set-image-metadata"]
+          },
+          "then": {
+            "not": { "required": ["annotation-set-image-set-uuids"] },
+            "properties": {
+              "annotation-set-images": {
+                "items": {
+                  "required": ["image-hash-sha256", "image-handle"],
+                  "not": { "required": ["image-set-uuid"] },
+                  "properties": { "image-uuid-source": { "const": "assigned" } }
+                }
+              }
+            }
+          },
+          "else": { "required": ["annotation-set-image-set-uuids"] }
+        },
+        {
+          "description": "Machine scope is required when models are listed.",
+          "if": {
+            "properties": { "annotation-set-models": { "minItems": 1 } },
+            "required": ["annotation-set-models"]
+          },
+          "then": { "required": ["annotation-set-machine-scope"] }
+        }
+      ],
+      "additionalProperties": false
+    },
+
+    "image": {
+      "type": "object",
+      "properties": {
+        "image-uuid": { "$ref": "#/$defs/uuid" },
+        "image-uuid-source": { "enum": ["embedded", "assigned"] },
+        "image-set-uuid": { "$ref": "#/$defs/uuid" },
+        "image-filename": { "type": "string" },
+        "image-handle": { "$ref": "#/$defs/uri" },
+        "image-hash-sha256": { "anyOf": [ { "$ref": "#/$defs/sha256" }, { "type": "null" } ] },
+        "image-width-pixels": { "type": "integer", "minimum": 1 },
+        "image-height-pixels": { "type": "integer", "minimum": 1 },
+        "image-datetime": { "$ref": "#/$defs/datetime" }
+      },
+      "required": ["image-uuid", "image-uuid-source", "image-width-pixels", "image-height-pixels"],
+      "allOf": [
+        {
+          "if": {
+            "properties": { "image-uuid-source": { "const": "assigned" } },
+            "required": ["image-uuid-source"]
+          },
+          "then": { "required": ["image-hash-sha256"] }
+        },
+        {
+          "description": "An image that cannot be hashed needs a handle.",
+          "if": {
+            "properties": { "image-hash-sha256": { "type": "null" } },
+            "required": ["image-hash-sha256"]
+          },
+          "then": { "required": ["image-handle"] }
+        }
+      ],
+      "additionalProperties": false
+    },
+
+    "model": {
+      "type": "object",
+      "properties": {
+        "model-id": { "type": "string", "minLength": 1 },
+        "model-name": { "type": "string", "minLength": 1 },
+        "model-version": { "type": "string", "minLength": 1 },
+        "model-task": {
+          "enum": ["detection", "classification", "detection+classification", "segmentation"]
+        },
+        "model-handle": { "$ref": "#/$defs/doi-or-uri" },
+        "model-weights-sha256": { "$ref": "#/$defs/sha256" },
+        "model-description": { "type": "string" },
+        "model-score-type": { "type": "string" },
+        "model-confidence-threshold": { "$ref": "#/$defs/confidence" },
+        "model-label-set-uuid": { "$ref": "#/$defs/uuid" },
+        "model-training-images": { "$ref": "#/$defs/uuid-or-uri" },
+        "model-training-annotations": { "$ref": "#/$defs/uuid-or-uri" },
+        "model-validation-images": { "$ref": "#/$defs/uuid-or-uri" },
+        "model-validation-annotations": { "$ref": "#/$defs/uuid-or-uri" }
+      },
+      "required": ["model-id", "model-name", "model-version", "model-task"],
+      "additionalProperties": false
+    },
+
+    "shape-name": {
+      "enum": [
+        "single-pixel", "polyline", "polygon", "rectangle", "circle", "ellipse",
+        "whole-image", "mask"
+      ]
+    },
+    "inner-coordinates": { "type": "array", "items": { "type": "number" } },
+
+    "mask": {
+      "type": "object",
+      "properties": {
+        "encoding": { "enum": ["coco-rle", "coco-rle-compressed"] },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "counts": {}
+      },
+      "required": ["encoding", "width", "height", "counts"],
+      "allOf": [
+        {
+          "if": { "properties": { "encoding": { "const": "coco-rle" } } },
+          "then": {
+            "properties": {
+              "counts": { "type": "array", "items": { "type": "integer", "minimum": 0 }, "minItems": 1 }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "encoding": { "const": "coco-rle-compressed" } } },
+          "then": { "properties": { "counts": { "type": "string", "minLength": 1 } } }
+        }
+      ],
+      "additionalProperties": false
+    },
+
+    "review": {
+      "type": "object",
+      "properties": {
+        "review-reviewer": { "$ref": "#/$defs/named" },
+        "review-datetime": { "anyOf": [ { "$ref": "#/$defs/datetime" }, { "type": "null" } ] },
+        "review-outcome": { "enum": ["accepted", "modified", "rejected", "uncertain"] },
+        "review-changed": {
+          "type": "array",
+          "items": { "enum": ["label", "shape"] },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "review-previous": {
+          "type": "object",
+          "properties": {
+            "annotation-label-name": { "type": "string" },
+            "annotation-shape-name": { "$ref": "#/$defs/shape-name" },
+            "annotation-coordinates": { "type": "array", "items": { "$ref": "#/$defs/inner-coordinates" } },
+            "annotation-mask": { "$ref": "#/$defs/mask" },
+            "annotation-detection-model": { "$ref": "#/$defs/nullable-text" },
+            "annotation-detection-confidence": { "$ref": "#/$defs/nullable-confidence" },
+            "annotation-classification-model": { "$ref": "#/$defs/nullable-text" },
+            "annotation-classification-confidence": { "$ref": "#/$defs/nullable-confidence" }
+          },
+          "additionalProperties": false
+        },
+        "review-remarks": { "type": "string" }
+      },
+      "required": ["review-reviewer", "review-datetime", "review-outcome"],
+      "if": { "properties": { "review-outcome": { "const": "modified" } } },
+      "then": { "required": ["review-changed"] },
+      "else": { "not": { "required": ["review-changed"] } },
+      "additionalProperties": false
+    },
+
+    "annotation": {
+      "type": "object",
+      "properties": {
+        "annotation-uuid": { "$ref": "#/$defs/uuid" },
+        "annotation-image-uuid": { "$ref": "#/$defs/uuid" },
+        "annotation-human-or-machine": { "enum": ["human", "algorithm", "combination"] },
+        "annotation-detection-model": { "$ref": "#/$defs/nullable-text" },
+        "annotation-detection-confidence": { "$ref": "#/$defs/nullable-confidence" },
+        "annotation-classification-model": { "$ref": "#/$defs/nullable-text" },
+        "annotation-classification-confidence": { "$ref": "#/$defs/nullable-confidence" },
+        "annotation-classification-alternatives": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label-name": { "type": "string" },
+              "confidence": { "$ref": "#/$defs/confidence" }
+            },
+            "required": ["label-name", "confidence"],
+            "additionalProperties": false
+          }
+        },
+        "annotation-human-creators": { "$ref": "#/$defs/people" },
+        "annotation-creation-datetime": { "$ref": "#/$defs/datetime" },
+        "annotation-label-name": { "type": "string", "minLength": 1 },
+        "annotation-shape-name": { "$ref": "#/$defs/shape-name" },
+        "annotation-coordinates": {
+          "description": "Still images: exactly one inner array.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/inner-coordinates" },
+          "minItems": 1,
+          "maxItems": 1
+        },
+        "annotation-mask": { "$ref": "#/$defs/mask" },
+        "annotation-measurement": { "type": "number", "minimum": 0 },
+        "annotation-reviews": { "type": "array", "items": { "$ref": "#/$defs/review" } },
+        "annotation-review-status": {
+          "enum": ["unreviewed", "accepted", "modified", "rejected", "uncertain"]
+        },
+        "annotation-machine-training-validation": { "enum": ["training", "validation"] },
+        "annotation-additional-info": { "type": "string" }
+      },
+      "required": [
+        "annotation-uuid", "annotation-image-uuid", "annotation-human-or-machine",
+        "annotation-detection-model", "annotation-classification-model",
+        "annotation-creation-datetime", "annotation-label-name", "annotation-shape-name",
+        "annotation-coordinates"
+      ],
+      "allOf": [
+        { "$ref": "#/$defs/coordinates-by-shape" },
+        {
+          "description": "A mask is required for the mask shape and not allowed otherwise.",
+          "if": { "properties": { "annotation-shape-name": { "const": "mask" } } },
+          "then": { "required": ["annotation-mask"] },
+          "else": { "not": { "required": ["annotation-mask"] } }
+        },
+        {
+          "description": "No confidence without a model.",
+          "if": { "properties": { "annotation-detection-model": { "type": "null" } } },
+          "then": { "properties": { "annotation-detection-confidence": { "type": "null" } } }
+        },
+        {
+          "if": { "properties": { "annotation-classification-model": { "type": "null" } } },
+          "then": { "properties": { "annotation-classification-confidence": { "type": "null" } } }
+        },
+        { "$ref": "#/$defs/human-or-machine-agrees" },
+        {
+          "description": "A review status is required once there are reviews.",
+          "if": {
+            "properties": { "annotation-reviews": { "minItems": 1 } },
+            "required": ["annotation-reviews"]
+          },
+          "then": { "required": ["annotation-review-status"] }
+        }
+      ],
+      "additionalProperties": false
+    },
+
+    "coordinates-by-shape": {
+      "description": "Number of values in the inner coordinate array for each shape. Evenness, polygon closure and rectangle/ellipse geometry are not checked here.",
+      "allOf": [
+        {
+          "if": { "properties": { "annotation-shape-name": { "const": "single-pixel" } } },
+          "then": { "properties": { "annotation-coordinates": { "items": { "minItems": 2, "maxItems": 2 } } } }
+        },
+        {
+          "if": { "properties": { "annotation-shape-name": { "const": "polyline" } } },
+          "then": { "properties": { "annotation-coordinates": { "items": { "minItems": 4 } } } }
+        },
+        {
+          "if": { "properties": { "annotation-shape-name": { "const": "polygon" } } },
+          "then": { "properties": { "annotation-coordinates": { "items": { "minItems": 8 } } } }
+        },
+        {
+          "if": { "properties": { "annotation-shape-name": { "enum": ["rectangle", "ellipse", "mask"] } } },
+          "then": { "properties": { "annotation-coordinates": { "items": { "minItems": 8, "maxItems": 8 } } } }
+        },
+        {
+          "if": { "properties": { "annotation-shape-name": { "const": "circle" } } },
+          "then": { "properties": { "annotation-coordinates": { "items": { "minItems": 3, "maxItems": 3 } } } }
+        },
+        {
+          "if": { "properties": { "annotation-shape-name": { "const": "whole-image" } } },
+          "then": { "properties": { "annotation-coordinates": { "items": { "maxItems": 0 } } } }
+        }
+      ]
+    },
+
+    "human-or-machine-agrees": {
+      "description": "annotation-human-or-machine must agree with which steps a model did; human creators are listed when a human did a step.",
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "annotation-detection-model": { "type": "null" },
+              "annotation-classification-model": { "type": "null" }
+            }
+          },
+          "then": {
+            "properties": {
+              "annotation-human-or-machine": { "const": "human" },
+              "annotation-human-creators": { "minItems": 1 }
+            },
+            "required": ["annotation-human-creators"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "annotation-detection-model": { "type": "string" },
+              "annotation-classification-model": { "type": "string" }
+            }
+          },
+          "then": {
+            "properties": {
+              "annotation-human-or-machine": { "const": "algorithm" },
+              "annotation-human-creators": { "maxItems": 0 }
+            }
+          }
+        },
+        {
+          "if": {
+            "anyOf": [
+              {
+                "properties": {
+                  "annotation-detection-model": { "type": "string" },
+                  "annotation-classification-model": { "type": "null" }
+                }
+              },
+              {
+                "properties": {
+                  "annotation-detection-model": { "type": "null" },
+                  "annotation-classification-model": { "type": "string" }
+                }
+              }
+            ]
+          },
+          "then": {
+            "properties": {
+              "annotation-human-or-machine": { "const": "combination" },
+              "annotation-human-creators": { "minItems": 1 }
+            },
+            "required": ["annotation-human-creators"]
+          }
+        }
+      ]
+    }
+  }
+}

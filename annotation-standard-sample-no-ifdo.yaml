@@ -1,0 +1,134 @@
+# Sample annotation set for images that have no iFDO (refined_standard.md, revision 0.11,
+# "Images without an embedded UUID, or without an iFDO", Case 2).
+#
+# - annotation-set-image-metadata is "none", so the annotation-set-images entries are the only
+#   records of the images. Image set UUIDs are omitted.
+# - Image 1 had no UUID anywhere. Its UUID is a version 5 UUID derived from its SHA-256 with the
+#   standard's provisional namespace 8fb66ecc-ce0d-45ff-b8ab-23bd7774d760, so anyone holding the
+#   same file can recompute it.
+# - Image 2 is only available from an IIIF image server, so it cannot be hashed. Its hash is null,
+#   so image-handle and the pixel size are required.
+# - The last annotation is a pixel mask stored as an uncompressed COCO RLE (revision 0.8).
+# - It uses the label set in annotation-standard-sample.yaml.
+#
+# Illustrative only: people, URLs, hashes and coordinates are invented. ORCID is ORCID's
+# documented example ID.
+
+annotation-set:
+  annotation-set-standard-version: "0.11"
+  annotation-set-name: Legacy holothurian photographs, re-annotated
+  annotation-set-abstract: >-
+    Re-annotation of scanned photographs from a 2019 survey whose image metadata was never
+    published. Positions and times are not available.
+  annotation-set-objective: Presence of echinoderm morphotypes, for comparison with the PAP-SO time series.
+  annotation-set-curation-protocol: All annotations reviewed by the PI.
+  annotation-set-creators:
+    - name: Sam Placeholder
+      uri: mailto:sam.placeholder@example.org
+  annotation-set-pi:
+    name: Alex Example
+    uri: https://orcid.org/0000-0002-1825-0097
+  annotation-set-license:
+    name: CC-BY-4.0
+    uri: https://creativecommons.org/licenses/by/4.0/
+  annotation-set-copyright: (c) 2026 Example Oceanographic Centre
+  annotation-set-uuid: 8c3e1714-3bc8-4e3f-a8cb-44fe5c38971b
+  annotation-set-version: "1.0"
+  annotation-set-image-set-names:
+    - Scanned 2019 survey photographs (no iFDO)
+  annotation-set-image-metadata: none
+  annotation-set-label-set-names:
+    - PAP-SO abyssal epibenthic megafauna
+  annotation-set-label-set-uuids:
+    - d6c37bc4-4b96-4110-bfd8-6bc2cac3294e
+  annotation-set-quantitative-or-qualitative: qualitative
+  annotation-set-quantification-type: presence-absence
+
+  annotation-set-images:
+    - image-uuid: 1e831961-f795-5acb-b69e-268f72a970f5   # UUID v5 from the hash below
+      image-uuid-source: assigned
+      image-hash-sha256: c96d81eaaf3df0e50995de9cf3e0d1652b6f3bf68ed40d09b8f0f6e16081a202
+      image-filename: HOLO_2019_0815_112.png
+      image-handle: https://example.org/archive/2019/HOLO_2019_0815_112.png
+      image-width-pixels: 3264
+      image-height-pixels: 2448
+    - image-uuid: 8ad1d84e-ac98-4462-b2e6-e5dcbc761ef4   # served only by IIIF: cannot be hashed
+      image-uuid-source: assigned
+      image-hash-sha256: null
+      image-filename: HOLO_2019_0815_113
+      image-handle: https://iiif.example.org/iiif/3/HOLO_2019_0815_113/full/max/0/default.jpg
+      image-width-pixels: 3264
+      image-height-pixels: 2448
+
+  annotation-set-annotations:
+    - annotation-uuid: 8ad5e2b0-4d61-4c7a-9b3e-2f1a6c0d9e47
+      annotation-image-uuid: 1e831961-f795-5acb-b69e-268f72a970f5
+      annotation-human-or-machine: human
+      annotation-detection-model: null
+      annotation-detection-confidence: null
+      annotation-classification-model: null
+      annotation-classification-confidence: null
+      annotation-human-creators:
+        - name: Sam Placeholder
+          uri: mailto:sam.placeholder@example.org
+      annotation-creation-datetime: 2026-10-02T13:40:00Z
+      annotation-label-name: Holothurian morphotype 1
+      annotation-shape-name: circle
+      annotation-coordinates: [[1620.5, 1288, 74]]
+      annotation-review-status: accepted
+      annotation-reviews:
+        - review-reviewer:
+            name: Alex Example
+            uri: https://orcid.org/0000-0002-1825-0097
+          review-datetime: 2026-10-03T09:00:00Z
+          review-outcome: accepted
+
+    - annotation-uuid: 3f7c9a21-8e54-4b06-a1d2-7c9e0b4f6a38
+      annotation-image-uuid: 8ad1d84e-ac98-4462-b2e6-e5dcbc761ef4
+      annotation-human-or-machine: human
+      annotation-detection-model: null
+      annotation-detection-confidence: null
+      annotation-classification-model: null
+      annotation-classification-confidence: null
+      annotation-human-creators:
+        - name: Sam Placeholder
+          uri: mailto:sam.placeholder@example.org
+      annotation-creation-datetime: 2026-10-02T13:52:10Z
+      annotation-label-name: Asteroid morphotype 2
+      annotation-shape-name: ellipse   # axis a: (940,1710)-(1180,1710); axis b: (1060,1640)-(1060,1780)
+      annotation-coordinates: [[940, 1710, 1180, 1710, 1060, 1640, 1060, 1780]]
+      annotation-review-status: accepted
+      annotation-reviews:
+        - review-reviewer:
+            name: Alex Example
+            uri: https://orcid.org/0000-0002-1825-0097
+          review-datetime: 2026-10-03T09:04:30Z
+          review-outcome: accepted
+
+    # Hand-painted mask, stored as an uncompressed COCO RLE (a list of run lengths, column-major,
+    # starting with background). Its 224 pixels lie in columns 2391-2415 and rows 594-609, so
+    # the bounding rectangle is [2391, 594] to [2416, 610].
+    - annotation-uuid: 5b0e8f3c-7a21-4d9e-8c64-1f2a3b4c5d6e
+      annotation-image-uuid: 8ad1d84e-ac98-4462-b2e6-e5dcbc761ef4
+      annotation-human-or-machine: human
+      annotation-detection-model: null
+      annotation-detection-confidence: null
+      annotation-classification-model: null
+      annotation-classification-confidence: null
+      annotation-human-creators:
+        - name: Sam Placeholder
+          uri: mailto:sam.placeholder@example.org
+      annotation-creation-datetime: 2026-10-02T14:05:51Z
+      annotation-label-name: Holothurian morphotype 1
+      annotation-shape-name: mask
+      annotation-coordinates: [[2391, 594, 2416, 594, 2416, 610, 2391, 610]]
+      annotation-mask:
+        encoding: coco-rle
+        width: 3264
+        height: 2448
+        counts: [5853766, 4, 2443, 6, 2441, 8, 2439, 10, 2438, 10, 2437, 12, 2436, 12, 2436, 12,
+                 2436, 12, 2436, 12, 2436, 12, 2436, 12, 2436, 12, 2437, 10, 2438, 10, 2439, 8,
+                 2441, 6, 2443, 4, 2, 4, 2443, 6, 2441, 8, 2440, 8, 2440, 8, 2440, 8, 2441, 6,
+                 2443, 4, 2077744]
+      annotation-review-status: unreviewed
+      annotation-reviews: []

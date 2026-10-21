@@ -1,0 +1,414 @@
+# Nested form of annotation-standard-sample.yaml (refined_standard.md, revision 0.11, Naming rule 8).
+#
+# Generated from the prefixed sample: each key is the prefixed name with its container's prefix
+# removed (label-set-, label-, annotation-set-, annotation-, image-, model-, review-).
+# For example annotation-set > name == annotation-set-name, and annotation-set > annotations >
+# image-uuid == annotation-image-uuid. The prefixed file is the normative form; both carry the
+# same information.
+
+label-set:
+  standard-version: "0.11"
+  name: PAP-SO abyssal epibenthic megafauna
+  project:
+    name: Porcupine Abyssal Plain Sustained Observatory (PAP-SO)
+    uri: https://example.org/projects/pap-so
+  context:
+    name: RRS James Cook cruise JC999, AUV seabed photography
+    uri: https://example.org/cruises/jc999
+  abstract: >-
+    Labels for invertebrate megafauna (>1 cm) visible in downward-facing AUV photographs of the
+    PAP abyssal plain, defined for long-term monitoring of community composition. Morphotypes are
+    used where identification to a named taxon is not possible from imagery.
+  objective: >-
+    Epibenthic echinoderm megafauna resolvable in images at 3 m altitude; excludes infauna, fishes
+    and organisms smaller than 1 cm.
+  creators:
+    - name: Alex Example
+      uri: https://orcid.org/0000-0002-1825-0097
+    - name: Sam Placeholder
+      uri: mailto:sam.placeholder@example.org
+  pi:
+    name: Alex Example
+    uri: https://orcid.org/0000-0002-1825-0097
+  license:
+    name: CC-BY-4.0
+    uri: https://creativecommons.org/licenses/by/4.0/
+  copyright: (c) 2026 Example Oceanographic Centre
+  uuid: d6c37bc4-4b96-4110-bfd8-6bc2cac3294e
+  version: "2"
+  related-material:
+    - https://doi.org/10.5072/example.morphotype-guide
+    - https://example.org/pap-so/megafauna-catalogue
+  doi: 10.5072/example.labelset.pap-megafauna.v2
+  catalogue: https://example.org/pap-so/megafauna-catalogue
+  funding: Example Research Council grant EX/0001/1
+
+  labels:
+    - name: Echinodermata
+      parent-name: null
+      lowest-taxonomic-name: Echinodermata
+      lowest-aphia-id: 1806
+      is-lowest-taxon: true
+      identification-qualifier: null
+      uuid: e8ba7fd5-64cf-46e9-a305-4680895d9d7e
+    - name: Holothurian morphotype 1
+      parent-name: Echinodermata
+      lowest-taxonomic-name: Holothuroidea
+      lowest-aphia-id: 123083
+      is-lowest-taxon: false
+      identification-qualifier: indet.
+      uuid: 4b4a9d33-21b2-4d8d-be2d-f74beb381069
+    - name: Asteroid morphotype 2
+      parent-name: Echinodermata
+      lowest-taxonomic-name: Asteroidea
+      lowest-aphia-id: 123080
+      is-lowest-taxon: false
+      identification-qualifier: indet.
+      uuid: a4c667e9-051a-46e9-89e2-e66f3db47c05
+
+annotation-set:
+  standard-version: "0.11"
+  name: JC999 AUV megafauna annotations
+  project:
+    name: Porcupine Abyssal Plain Sustained Observatory (PAP-SO)
+    uri: https://example.org/projects/pap-so
+  context:
+    name: RRS James Cook cruise JC999, AUV seabed photography
+    uri: https://example.org/cruises/jc999
+  abstract: >-
+    Echinoderm megafauna annotations in a random subsample of images from two AUV missions.
+    Megafauna were detected by a machine-learning model and by human annotators; machine
+    detections were reviewed by a human.
+  objective: >-
+    Estimate density (individuals per m2) of echinoderm morphotypes at the PAP-SO site, to a
+    precision suitable for detecting a 20% inter-annual change.
+  target-environment: Abyssal plain soft-sediment seabed, 4800-4850 m, within the PAP-SO site boundary.
+  target-timescale: Single survey, June 2026; part of an annual time series.
+  curation-protocol: >-
+    Every machine detection was reviewed by a human, who accepted, corrected or rejected it.
+    A random 10% of human annotations were reviewed by a second annotator; uncertain cases were
+    settled by the PI. Rejected annotations are kept in this set and are not occurrences.
+  creators:
+    - name: Sam Placeholder
+      uri: mailto:sam.placeholder@example.org
+    - name: Jo Sample
+      uri: https://orcid.org/0000-0002-1825-0097
+  pi:
+    name: Alex Example
+    uri: https://orcid.org/0000-0002-1825-0097
+  license:
+    name: CC-BY-4.0
+    uri: https://creativecommons.org/licenses/by/4.0/
+  copyright: (c) 2026 Example Oceanographic Centre
+  uuid: 7f28f54d-17bd-4781-8b21-82345f6b11ed
+  handle: https://hdl.example.org/annotations/7f28f54d-17bd-4781-8b21-82345f6b11ed
+  version: "1.0"
+  image-set-names:
+    - JC999 AUV mission M42 seabed images
+    - JC999 AUV mission M43 seabed images
+  image-set-uuids:
+    - 4b30f1c8-d061-40e0-9d3a-8a971a3c1b45
+    - 7f68599d-05a0-4a53-abca-c0aebf3a5143
+  image-set-handles:
+    - https://hdl.example.org/images/4b30f1c8-d061-40e0-9d3a-8a971a3c1b45
+    - https://hdl.example.org/images/7f68599d-05a0-4a53-abca-c0aebf3a5143
+  image-metadata: ifdo
+  label-set-names:
+    - PAP-SO abyssal epibenthic megafauna
+  label-set-uuids:
+    - d6c37bc4-4b96-4110-bfd8-6bc2cac3294e
+  connected-set-uuids:
+    - c578c04c-ab84-46a5-b098-4d2c53059f7e
+  machine-scope: >-
+    An object detector proposed megafauna boxes in all images. A second classifier relabelled
+    detections of small echinoderms. Every machine annotation was reviewed by a human.
+  related-material:
+    - https://doi.org/10.5072/example.pap-methods-paper
+  quantitative-or-qualitative: quantitative
+  quantification-type: count
+  biological-metrics: Density (individuals per m2) by morphotype.
+  biological-stats: >-
+    Image is the sampling unit; 2 missions x 250 images. Inter-annual comparison of density by
+    generalised linear model.
+  obis-datasets:
+    - 10.5072/example.obis.jc999-megafauna
+  funding: Example Research Council grant EX/0001/1
+
+  models:
+    - id: pap-det-v3
+      name: YOLOv8m
+      version: "3.1.0"
+      task: detection+classification
+      handle: https://doi.org/10.5072/example.pap-det-v3
+      description: Inference at 1280 px, NMS IoU 0.5, 2x2 tiling with 10% overlap.
+      score-type: YOLOv8 class confidence after NMS
+      confidence-threshold: 0.25
+      training-images: 6a09c969-28a1-4182-8154-69383e680222
+      training-annotations: c53b9646-2dfd-4a66-bb7f-3df999874d54
+      validation-images: ba13fe1b-f311-427f-894c-c50d155095a6
+      validation-annotations: 15fcf0f7-c216-46d5-9ab3-e5429712c9df
+    - id: pap-cls-v1
+      name: ViT-B/16
+      version: "1.0"
+      task: classification
+      handle: https://doi.org/10.5072/example.pap-cls-v1
+      score-type: softmax class probability
+      training-annotations: 6937cd3d-1e3e-445d-abd0-9ac53582888d
+    - id: sam-vit-h
+      name: Segment Anything (SAM) ViT-H
+      version: sam_vit_h_4b8939
+      task: segmentation
+      handle: https://github.com/facebookresearch/segment-anything
+      description: Prompted with one positive click by the annotator; mask scaled to full image resolution.
+      score-type: SAM predicted IoU
+
+  images:
+    - uuid: 0d1f6a52-8c2e-4f0b-9a4e-3b7c51e2d9a1
+      uuid-source: embedded
+      set-uuid: 4b30f1c8-d061-40e0-9d3a-8a971a3c1b45
+      filename: JC999_M42_20260612T031522Z_0187.jpg
+      datetime: 2026-06-12T03:15:22.000Z
+      handle: https://example.org/images/jc999/m42/JC999_M42_20260612T031522Z_0187.jpg
+      width-pixels: 6000
+      height-pixels: 4000
+    - uuid: 9a3e2c17-5b48-4d6f-8e01-c2f4a7b6d530   # legacy file: UUID recorded in the iFDO only
+      uuid-source: assigned
+      hash-sha256: 3f9a1c0e7b2d4a6f8e1c5b9d0a7e3f2c6b8d1e4a9c0f7b3e5d2a8c6f1b4e9d07
+      set-uuid: 7f68599d-05a0-4a53-abca-c0aebf3a5143
+      filename: JC999_M43_20260614T224907Z_0042.jpg
+      datetime: 2026-06-14T22:49:07.000Z
+      width-pixels: 6000
+      height-pixels: 4000
+    - uuid: 5e7b9d04-21c3-4a8f-b6d2-0f9e8c3a1b77   # examined, nothing found
+      uuid-source: embedded
+      set-uuid: 7f68599d-05a0-4a53-abca-c0aebf3a5143
+      filename: JC999_M43_20260614T225012Z_0043.jpg
+      datetime: 2026-06-14T22:50:12.000Z
+      width-pixels: 6000
+      height-pixels: 4000
+
+  annotations:
+
+    # ---- Image 1 (image set M42) ----
+
+    # Human box, checked by a second annotator.
+    - uuid: 9ef7f6c2-8bbe-4c73-b322-f055d45f3290
+      image-uuid: 0d1f6a52-8c2e-4f0b-9a4e-3b7c51e2d9a1
+      human-or-machine: human
+      detection-model: null
+      detection-confidence: null
+      classification-model: null
+      classification-confidence: null
+      human-creators:
+        - name: Sam Placeholder
+          uri: mailto:sam.placeholder@example.org
+      creation-datetime: 2026-09-03T14:22:10Z
+      label-name: Holothurian morphotype 1
+      shape-name: rectangle
+      coordinates: [[1204, 811, 1388, 811, 1388, 902, 1204, 902]]
+      review-status: accepted
+      reviews:
+        - reviewer:
+            name: Jo Sample
+            uri: https://orcid.org/0000-0002-1825-0097
+          datetime: 2026-09-06T11:05:00Z
+          outcome: accepted
+      additional-info: Feeding trail visible behind animal.
+
+    # Single-pass YOLO detection, accepted unchanged. Also used as training data.
+    - uuid: 3340ab0f-b891-42d6-a0a3-9ea48e187268
+      image-uuid: 0d1f6a52-8c2e-4f0b-9a4e-3b7c51e2d9a1
+      human-or-machine: algorithm
+      detection-model: pap-det-v3
+      detection-confidence: null
+      classification-model: pap-det-v3
+      classification-confidence: 0.81
+      human-creators: []
+      creation-datetime: 2026-09-01T08:05:44Z
+      label-name: Asteroid morphotype 2
+      shape-name: rectangle
+      coordinates: [[310, 1502, 421, 1502, 421, 1610, 310, 1610]]
+      review-status: accepted
+      reviews:
+        - reviewer:
+            name: Jo Sample
+            uri: https://orcid.org/0000-0002-1825-0097
+          datetime: 2026-09-05T09:12:00Z
+          outcome: accepted
+      machine-training-validation: training
+
+    # YOLO box, relabelled by a separate classifier. The detector's score is kept as the
+    # detection confidence.
+    - uuid: 7c1e2f9a-6b3d-4e8a-9f20-5d4c3b2a1e0f
+      image-uuid: 0d1f6a52-8c2e-4f0b-9a4e-3b7c51e2d9a1
+      human-or-machine: algorithm
+      detection-model: pap-det-v3
+      detection-confidence: 0.64
+      classification-model: pap-cls-v1
+      classification-confidence: 0.92
+      classification-alternatives:
+        - name: Asteroid morphotype 2
+          confidence: 0.05
+        - name: Echinodermata
+          confidence: 0.02
+      human-creators: []
+      creation-datetime: 2026-09-01T08:06:02Z
+      label-name: Holothurian morphotype 1
+      shape-name: rectangle
+      coordinates: [[3020, 2210, 3187, 2210, 3187, 2302, 3020, 2302]]
+      review-status: accepted
+      reviews:
+        - reviewer:
+            name: Jo Sample
+            uri: https://orcid.org/0000-0002-1825-0097
+          datetime: 2026-09-05T09:13:10Z
+          outcome: accepted
+      machine-training-validation: validation
+
+    # Machine false positive, rejected and kept as a hard negative. Not an occurrence.
+    - uuid: 8d2f4b61-0c7e-4a93-b5d8-1e6f9a3c7b20
+      image-uuid: 0d1f6a52-8c2e-4f0b-9a4e-3b7c51e2d9a1
+      human-or-machine: algorithm
+      detection-model: pap-det-v3
+      detection-confidence: null
+      classification-model: pap-det-v3
+      classification-confidence: 0.31
+      human-creators: []
+      creation-datetime: 2026-09-01T08:06:15Z
+      label-name: Asteroid morphotype 2
+      shape-name: rectangle
+      coordinates: [[5120, 340, 5210, 340, 5210, 418, 5120, 418]]
+      review-status: rejected
+      reviews:
+        - reviewer:
+            name: Jo Sample
+          datetime: 2026-09-05T09:20:05Z
+          outcome: rejected
+          remarks: Sediment mound, not an organism.
+
+    # Coiled holothurian traced as a mask (a ring with a hole). SAM made the mask from the
+    # annotator's click, and the annotator chose the label. The coordinates are the mask's
+    # bounding rectangle.
+    - uuid: 492aa121-ea24-4479-bf84-6c3171fbf23d
+      image-uuid: 0d1f6a52-8c2e-4f0b-9a4e-3b7c51e2d9a1
+      human-or-machine: combination
+      detection-model: sam-vit-h
+      detection-confidence: 0.93
+      classification-model: null
+      classification-confidence: null
+      human-creators:
+        - name: Sam Placeholder
+          uri: mailto:sam.placeholder@example.org
+      creation-datetime: 2026-09-03T14:30:41Z
+      label-name: Holothurian morphotype 1
+      shape-name: mask
+      coordinates: [[4488, 2792, 4513, 2792, 4513, 2809, 4488, 2809]]
+      mask:
+        encoding: coco-rle-compressed
+        width: 6000
+        height: 4000
+        counts: '`omSa01ll36L2N2N2O0O2O00H`SL0_l30cSL0\l3OfSL0Zl30fSL0Zl30fSL0Zl30fSL0Zl30fSL0Zl31dSL0]l30aSL0`l38001N101N2N2N4Jck]e5'
+      review-status: unreviewed
+      reviews: []
+
+    # ---- Image 2 (image set M43; UUID assigned, not embedded) ----
+
+    # Machine box whose label the reviewer corrected. The original machine values are in
+    # review-previous, and the detector's score moved to the detection confidence.
+    - uuid: 2b7b5a13-13f9-4873-a4e1-378541321ce5
+      image-uuid: 9a3e2c17-5b48-4d6f-8e01-c2f4a7b6d530
+      human-or-machine: combination
+      detection-model: pap-det-v3
+      detection-confidence: 0.47
+      classification-model: null
+      classification-confidence: null
+      human-creators:
+        - name: Jo Sample
+          uri: https://orcid.org/0000-0002-1825-0097
+      creation-datetime: 2026-09-01T08:11:37Z
+      label-name: Holothurian morphotype 1
+      shape-name: rectangle
+      coordinates: [[882, 612, 1040, 612, 1040, 731, 882, 731]]
+      review-status: modified
+      reviews:
+        - reviewer:
+            name: Jo Sample
+            uri: https://orcid.org/0000-0002-1825-0097
+          datetime: 2026-09-05T09:14:30Z
+          outcome: modified
+          changed: [label]
+          previous:
+            label-name: Asteroid morphotype 2
+            detection-confidence: null
+            classification-model: pap-det-v3
+            classification-confidence: 0.47
+
+    # Human outline of the same animal's body (closed polygon: last vertex repeats the first).
+    - uuid: 6d49303a-0054-4fd4-956d-b774e7aa5234
+      image-uuid: 9a3e2c17-5b48-4d6f-8e01-c2f4a7b6d530
+      human-or-machine: human
+      detection-model: null
+      detection-confidence: null
+      classification-model: null
+      classification-confidence: null
+      human-creators:
+        - name: Sam Placeholder
+          uri: mailto:sam.placeholder@example.org
+      creation-datetime: 2026-09-04T10:11:37Z
+      label-name: Holothurian morphotype 1
+      shape-name: polygon
+      coordinates: [[882, 640, 951, 612, 1040, 655, 1012, 731, 905, 720, 882, 640]]
+      review-status: unreviewed
+      reviews: []
+
+    # Human length measurement along the body axis.
+    - uuid: c51e9c0e-23a2-4fb0-b415-b11a3c4cd33a
+      image-uuid: 9a3e2c17-5b48-4d6f-8e01-c2f4a7b6d530
+      human-or-machine: human
+      detection-model: null
+      detection-confidence: null
+      classification-model: null
+      classification-confidence: null
+      human-creators:
+        - name: Sam Placeholder
+          uri: mailto:sam.placeholder@example.org
+      creation-datetime: 2026-09-04T10:12:20Z
+      label-name: Holothurian morphotype 1
+      shape-name: polyline
+      coordinates: [[890, 630, 1030, 715]]
+      measurement: 163.8
+      review-status: unreviewed
+      reviews: []
+
+    # Human point, flagged as uncertain, then settled by the PI.
+    - uuid: 51602484-ee63-4f66-b4b7-9f88f4af2962
+      image-uuid: 9a3e2c17-5b48-4d6f-8e01-c2f4a7b6d530
+      human-or-machine: human
+      detection-model: null
+      detection-confidence: null
+      classification-model: null
+      classification-confidence: null
+      human-creators:
+        - name: Sam Placeholder
+          uri: mailto:sam.placeholder@example.org
+      creation-datetime: 2026-09-04T10:15:02Z
+      label-name: Echinodermata
+      shape-name: single-pixel
+      coordinates: [[2048, 1536]]
+      review-status: accepted
+      reviews:
+        - reviewer:
+            name: Jo Sample
+            uri: https://orcid.org/0000-0002-1825-0097
+          datetime: 2026-09-06T10:02:44Z
+          outcome: uncertain
+          remarks: Too small to tell; possibly a juvenile asteroid.
+        - reviewer:
+            name: Alex Example
+            uri: https://orcid.org/0000-0002-1825-0097
+          datetime: 2026-09-12T15:40:10Z
+          outcome: accepted
+          remarks: Keep at phylum level.
+      additional-info: Too small to assign a morphotype; recorded as a point.
+
+    # Image 3 (5e7b9d04-...) has no annotations: it was examined and nothing was found.
