@@ -34,8 +34,10 @@ change.
 - [Machine-generated annotations](refined_standard.md#machine-generated-annotations-models-and-confidence)
   and [Review provenance](refined_standard.md#review-provenance): which model did each step, its
   confidence, and who reviewed the result.
-- [Tables 1–4](refined_standard.md#table-1-label-set-attributes): every attribute, with its
-  requirement level and its Darwin Core, BIIGLE, VARS and SQUIDLE+ equivalents.
+- [Tables 1–10](refined_standard.md#table-1-label-set-attributes): every attribute, for label sets,
+  labels, annotation sets, annotations, models, images, reviews, masks, `{name, uri}` objects and
+  the top-level containers. Each has its requirement level and its Darwin Core, iFDO, BIIGLE,
+  VARS and SQUIDLE+ equivalents where they exist.
 - [VARS: corrected notes](refined_standard.md#vars-corrected-notes): how VARS (annosaurus)
   actually stores annotations.
 - [Open issues](refined_standard.md#open-issues-for-later-revisions): what is still to be decided.

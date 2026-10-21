@@ -29,6 +29,7 @@ changes from the draft using the draft's names.
 | 0.9 | 2026-10-21 | Added an optional `image-datetime` (capture time) to `annotation-set-images` entries. It is the same instant as iFDO's `image-datetime` and VARS's `recorded_timestamp`, and maps to Darwin Core `eventDate`. It is optional with an iFDO and recommended without one. The general video case is not covered. |
 | 0.10 | 2026-10-21 | Formally defined the top-level containers `label-set` and `annotation-set` in a new [File structure](#file-structure) section: at most one of each per file, a bundled label set must be one the annotation set uses, other top-level keys are reserved, and each container has a minimum set of required attributes. Added `label-set-standard-version` and `annotation-set-standard-version`. Added serialization rules and the reasons for not using iFDO's header and items layout. Added open issue 11 (requirement levels and a schema). |
 | 0.11 | 2026-10-21 | Added a Level column (REQUIRED / RECOMMENDED / OPTIONAL / conditional) to every attribute in Tables 1–4, replacing the 0.10 minimum. Added a draft JSON Schema, [annotation-standard.schema.json](annotation-standard.schema.json), and listed the checks it cannot make. Resolved open issue 11, and added open issue 12 (local extensions). |
+| 0.12 | 2026-10-21 | Gathered every attribute into the tables at the end of the document. Added [Table 5](#table-5-model-attributes) (model attributes), [Table 6](#table-6-image-attributes) (image attributes), [Table 7](#table-7-review-attributes) (review attributes), [Table 8](#table-8-mask-keys) (mask keys) [Table 9](#table-9-name-and-uri-object) (`{name, uri}` object) and [Table 10](#table-10-top-level-containers) (top-level containers), with levels and Darwin Core, iFDO, COCO and VARS terms where they apply. The attribute tables inside the sections, including the model, image, review and mask tables and the per-section annotation tables, are replaced by links to the end tables. Their extra detail was merged into Table 4. No attribute rules changed. |
 
 ## Structure
 
@@ -56,9 +57,9 @@ below fix this. They follow iFDO v2.2.1 wherever iFDO has a convention.
    | `label-` | One label | Table 2 |
    | `annotation-set-` | The annotation set | Table 3 |
    | `annotation-` | One annotation | Table 4 |
-   | `image-` | One entry in `annotation-set-images` (same names as iFDO) | [Annotated image attributes](#annotated-image-attributes-new-one-entry-per-image-in-annotation-set-images) |
-   | `model-` | One entry in `annotation-set-models` | [Model attributes](#model-attributes-new-one-entry-per-model-version-in-annotation-set-models) |
-   | `review-` | One entry in `annotation-reviews` | [Review attributes](#review-attributes-new-one-entry-per-review-in-annotation-reviews) |
+   | `image-` | One entry in `annotation-set-images` (same names as iFDO) | [Table 6](#table-6-image-attributes) |
+   | `model-` | One entry in `annotation-set-models` | [Table 5](#table-5-model-attributes) |
+   | `review-` | One entry in `annotation-reviews` | [Table 7](#table-7-review-attributes) |
 
    This is the same split as iFDO's `image-set-` (set level) and `image-` (item level).
 3. **References** to another object end in `-uuid`, or `-uuids` for a list. Examples:
@@ -71,6 +72,7 @@ below fix this. They follow iFDO v2.2.1 wherever iFDO has a convention.
    - For a person, `uri` SHOULD be an ORCID. If there is no ORCID, it MAY be a `mailto:` URI.
    - This replaces the draft's unnamed second rows (IDs and URIs) and its parallel name and ID
      lists.
+   - The object is defined in [Table 9](#table-9-name-and-uri-object).
 6. **Values.** Controlled values are lowercase tokens with hyphens, such as `presence-absence` or
    `detection+classification`. Booleans are `true` and `false`, not Yes and No.
 7. **Containers.** These are defined formally in [File structure](#file-structure).
@@ -149,12 +151,9 @@ in naming rule 7.
 
 ### Top-level containers
 
-A file following this standard is a single object with at most two keys:
-
-| Key | Contents | Cardinality |
-| --- | --- | --- |
-| `label-set` | One label set: the Table 1 attributes, with its labels (Table 2) in `label-set-labels` | 0 or 1 |
-| `annotation-set` | One annotation set: the Table 3 attributes, with its annotations (Table 4) in `annotation-set-annotations`, its images in `annotation-set-images`, and its models in `annotation-set-models` | 0 or 1 |
+A file following this standard is a single object with at most two keys, `label-set` and
+`annotation-set`. Each holds at most one set. They are defined in
+[Table 10](#table-10-top-level-containers).
 
 Rules:
 
@@ -173,8 +172,9 @@ Rules:
 
 ### Requirement levels
 
-Since revision 0.11, every attribute in Tables 1–4 has a **Level**. The image, model and review
-entry tables already had one. The levels are:
+Every attribute in Tables 1–10 has a **Level**. Tables 1–4 gained one in revision 0.11. Tables 5–9
+gather the model, image, review, mask and `{name, uri}` attributes, which already had
+requirement levels, at the end of the document (0.12). The levels are:
 
 | Level | Meaning |
 | --- | --- |
@@ -634,14 +634,8 @@ What other formats use:
 ### `annotation-mask`
 
 `annotation-mask` is an object. It is REQUIRED when `annotation-shape-name` is `mask`, and MUST be
-absent otherwise.
-
-| Key | Meaning | Allowed value(s) |
-| --- | --- | --- |
-| `encoding` | The form of `counts` | `coco-rle` (a list of integers) or `coco-rle-compressed` (a string) |
-| `width` | Mask width in pixels. MUST equal `image-width-pixels`. | Integer > 0 |
-| `height` | Mask height in pixels. MUST equal `image-height-pixels`. | Integer > 0 |
-| `counts` | The run lengths | List of non-negative integers (`coco-rle`) or string (`coco-rle-compressed`) |
+absent otherwise. Its keys are `encoding`, `width`, `height` and `counts`, defined in
+[Table 8](#table-8-mask-keys).
 
 Like `{name, uri}`, it is a small object with plain keys, so the prefix rules don't apply to them.
 `width` and `height` are written out instead of COCO's `size: [height, width]`, because COCO's
@@ -760,19 +754,11 @@ What iFDO v2.2.1 does provide:
 4. **The filename is kept, but only for people to read.** `image-filename` moves to the image
    entry. It is RECOMMENDED there, but software MUST NOT use it to look up an image.
 
-### Annotated image attributes (new; one entry per image in `annotation-set-images`)
+### Annotated image attributes
 
-| Attribute name | Description | Allowed value(s) | Required | iFDO field | DarwinCore / Audubon Core term |
-| --- | --- | --- | --- | --- | --- |
-| image-uuid | The UUID of the annotated file. Annotations refer to it with `annotation-image-uuid`. When there is an iFDO, this is the iFDO `image-uuid`. | UUID | REQUIRED | `image-uuid` | dcterms:identifier of the media record |
-| image-uuid-source | **New in 0.4.** Where the UUID is recorded. `embedded`: in the file's metadata. `assigned`: only outside the file. See [Images without an embedded UUID, or without an iFDO](#images-without-an-embedded-uuid-or-without-an-ifdo). | `embedded`, `assigned` | REQUIRED | | |
-| image-set-uuid | The image set the image belongs to. It MUST be one of the set's `annotation-set-image-set-uuids` values. | UUID | REQUIRED if the annotation set references more than one image set. Omitted when `annotation-set-image-metadata` is `none`. | `image-set-uuid` | |
-| image-filename | The image's key in the iFDO `image-set-items` (a filename or relative path), or its original filename when there is no iFDO. For people to read; not for lookup. | Text | RECOMMENDED | key of `image-set-items` | |
-| image-handle | A URI to download the image | URI | REQUIRED when `annotation-set-image-metadata` is `none` or the hash is null. Otherwise OPTIONAL. | `image-handle` | ac:accessURI |
-| image-hash-sha256 | The SHA-256 hash of the file, as 64 lowercase hexadecimal characters. Confirms that the coordinates apply to these exact bytes, and links an assigned UUID to its file. | Hex string, or null if the bytes cannot be hashed | REQUIRED when `image-uuid-source` is `assigned`. Otherwise OPTIONAL. | `image-hash-sha256` | |
-| image-width-pixels | Width of the file in pixels | Integer > 0 | REQUIRED | none (see below) | exif:PixelXDimension |
-| image-height-pixels | Height of the file in pixels | Integer > 0 | REQUIRED | none (see below) | exif:PixelYDimension |
-| image-datetime | **New in 0.9.** When the image was captured, or when a video started. See [Capture time](#capture-time). | ISO 8601 date-time in UTC, e.g. `2026-06-12T03:15:22.000Z` | OPTIONAL when there is an iFDO, and it MUST then be the same instant as the iFDO value. RECOMMENDED when `annotation-set-image-metadata` is `none`. | `image-datetime` | eventDate |
+Each entry in `annotation-set-images` describes one annotated image: its UUID and where that UUID
+is recorded, its image set, filename, handle, hash, pixel width and height, and capture time. The
+attributes are defined in [Table 6](#table-6-image-attributes).
 
 Rules:
 
@@ -981,39 +967,24 @@ human.
 5. **`annotation-machine-detect-or-classify` is no longer a field.** It is derived from which model
    fields are filled (see the rules below).
 
-### Model attributes (new; one entry per model version in `annotation-set-models`)
+### Model attributes
 
-| Attribute name | Description | Allowed value(s) | Required |
-| --- | --- | --- | --- |
-| model-id | Identifier that annotations use to refer to this entry. Unique within the annotation set. | Text, e.g. `mbari452k_yolov8` | REQUIRED |
-| model-name | Name of the model or architecture | Text, e.g. `YOLOv8m` | REQUIRED |
-| model-version | Version of the trained weights. Use `unknown` only when converting legacy data that did not record it. | Text | REQUIRED |
-| model-task | What the model produces | `detection`, `classification`, `detection+classification`, `segmentation` | REQUIRED |
-| model-handle | Persistent link to the weights or the model card (DOI, Hugging Face, FathomNet model zoo, etc.) | URI or DOI | RECOMMENDED |
-| model-weights-sha256 | Hash of the weights file, to identify the exact weights | Hex string | OPTIONAL |
-| model-description | How the model was applied: inference settings, image size, non-maximum suppression (NMS) settings, tiling, post-processing | Text | OPTIONAL |
-| model-score-type | What the confidence means, e.g. "softmax class probability", "YOLO objectness × class probability", "calibrated probability" | Text | REQUIRED if any annotation reports a confidence from this model |
-| model-confidence-threshold | Minimum score kept. Detections below it were discarded. | Number in [0, 1] | RECOMMENDED. Needed to interpret absences: anything the model scored below the threshold is not in the data. |
-| model-label-set-uuid | The label set the model's output classes belong to, if it differs from the label set of the annotation set | UUID | OPTIONAL |
-| model-training-images | UUID or link to the training images | UUID or URI | RECOMMENDED |
-| model-training-annotations | UUID or link to the training annotations | UUID or URI | RECOMMENDED |
-| model-validation-images | UUID or link to the validation images | UUID or URI | OPTIONAL |
-| model-validation-annotations | UUID or link to the validation annotations | UUID or URI | OPTIONAL |
+Each model entry in `annotation-set-models` describes one model version: its identity, its task,
+what its scores mean, the threshold applied, and its training and validation data. The attributes
+are defined in [Table 5](#table-5-model-attributes).
 
 The set-level fields `annotation-machine-training-images`, `-training-annotations`,
-`-validation-images` and `-validation-annotations` are replaced by the per-model fields above.
-`annotation-set-machine-scope` stays at set level. It describes the role of machine annotation in the
+`-validation-images` and `-validation-annotations` are replaced by the per-model fields in
+Table 5. `annotation-set-machine-scope` stays at set level. It describes the role of machine annotation in the
 study as a whole.
 
-### Annotation attributes (new)
+### Annotation attributes
 
-| Attribute name | Description | Allowed value(s) |
-| --- | --- | --- |
-| annotation-detection-model | `model-id` of the model that produced the shape. Null if a human drew it, or if the shape is `whole-image`. | Text (a `model-id`) or null |
-| annotation-detection-confidence | The detection model's score for the shape (e.g. objectness) | Number in [0, 1] or null |
-| annotation-classification-model | `model-id` of the model that produced the label. Null if a human chose it. | Text (a `model-id`) or null |
-| annotation-classification-confidence | The classification model's score for the assigned label | Number in [0, 1] or null |
-| annotation-classification-alternatives | The model's other top-ranked labels, best first, each with its score. OPTIONAL; useful for review and for training. | List of `{label-name, confidence}` |
+Each annotation names the model that produced its shape and the model that produced its label,
+each with its own confidence, and may list the model's other top-ranked labels. These are
+`annotation-detection-model`, `annotation-detection-confidence`,
+`annotation-classification-model`, `annotation-classification-confidence` and
+`annotation-classification-alternatives`, defined in [Table 4](#table-4-annotation-attributes).
 
 ### Rules
 
@@ -1144,16 +1115,11 @@ VARS records a little of this: a `verifier` key in the box JSON, and the planned
 6. **Reviews are by humans.** A model that re-scores or relabels an annotation is a
    classification step and is recorded with the model fields, not as a review.
 
-### Review attributes (new; one entry per review in `annotation-reviews`)
+### Review attributes
 
-| Attribute name | Description | Allowed value(s) | Required |
-| --- | --- | --- | --- |
-| review-reviewer | The reviewer, as a person object (see [Naming rules](#naming-rules)) | `{name, uri}`. `name` is REQUIRED. `uri` is RECOMMENDED: an ORCID, or a `mailto:` URI. | REQUIRED |
-| review-datetime | When the review was made | ISO 8601 date-time, UTC; null only for legacy data that did not record it | REQUIRED |
-| review-outcome | What the reviewer decided | `accepted`, `modified`, `rejected`, `uncertain` | REQUIRED |
-| review-changed | Which parts the reviewer changed | List of `label`, `shape` | REQUIRED if `review-outcome` is `modified`; otherwise absent |
-| review-previous | The changed fields' values before this review | Object holding any of: `annotation-label-name`, `annotation-shape-name`, `annotation-coordinates`, `annotation-mask`, `annotation-detection-model`, `annotation-detection-confidence`, `annotation-classification-model`, `annotation-classification-confidence` | RECOMMENDED if `review-outcome` is `modified` |
-| review-remarks | Free-text notes, e.g. why an annotation was rejected | Text | OPTIONAL |
+Each entry in `annotation-reviews` records one review: the reviewer, the time, the outcome, what
+changed, the previous values and any remarks. The attributes are defined in
+[Table 7](#table-7-review-attributes).
 
 What each outcome means:
 
@@ -1166,10 +1132,9 @@ What each outcome means:
 
 ### Annotation attributes
 
-| Attribute name | Description | Allowed value(s) |
-| --- | --- | --- |
-| annotation-reviews | **New in 0.6; replaces `annotation-human-reviewer` and `annotation-human-reviewer-ID`.** The reviews of this annotation, oldest first. An empty list or an absent field means it has not been reviewed. | List of review entries |
-| annotation-review-status | **New in 0.6.** The `review-outcome` of the latest review, or `unreviewed` | `unreviewed`, `accepted`, `modified`, `rejected`, `uncertain` |
+Each annotation has `annotation-reviews`, a list of review entries (Table 7), and
+`annotation-review-status`, the outcome of the latest review. Both are defined in
+[Table 4](#table-4-annotation-attributes).
 
 ### Review rules
 
@@ -1330,7 +1295,7 @@ its cached deployment information (`mission_id`, `platform_name`, `mission_conta
 | annotation-set-label-set-uuids | UUIDs of the label sets used | List of UUIDs | REQUIRED | |
 | annotation-set-connected-set-uuids | UUIDs of connected annotation sets, for example sets for habitats or litter | List of UUIDs | OPTIONAL | |
 | annotation-set-machine-scope | A description of the scope of machine use, including how it relates to the scope and objectives of the study | Text | REQUIRED if `annotation-set-models` is not empty | |
-| annotation-set-models | One entry per model version used. See [Machine-generated annotations](#machine-generated-annotations-models-and-confidence). | List of model entries | REQUIRED if any annotation names a model | |
+| annotation-set-models | One entry per model version used, with the attributes in [Table 5](#table-5-model-attributes). See [Machine-generated annotations](#machine-generated-annotations-models-and-confidence). | List of model entries | REQUIRED if any annotation names a model | |
 | annotation-set-related-material | Papers, websites, software or other documentation associated with the annotation set | List of DOIs and/or URIs | OPTIONAL | associatedReferences |
 | annotation-set-quantitative-or-qualitative | Scope of observations | `qualitative`, `semi-quantitative`, `quantitative` | RECOMMENDED | samplingProtocol |
 | annotation-set-quantification-type | Planned type of quantification | `presence-absence`, `count`, `linear-measurement`, `area-measurement`, `volume-measurement`, `rate` | RECOMMENDED | organismQuantityType |
@@ -1351,11 +1316,11 @@ snake_case, except `observation_group`, which is `group`.
 | annotation-uuid | Unique identifier of the annotation | UUID | REQUIRED | occurrenceID | Annotation ID | `observations.uuid` (`observation_uuid` in the API). Each localization association also has its own `uuid`. | |
 | annotation-image-uuid | The `image-uuid` of the annotated file. It MUST match an entry in the set's `annotation-set-images`. | UUID | REQUIRED | ac:isROIOf → the media record's identifier | Image filename | `image_references.uuid`, taken from the localization JSON's `image_reference_uuid` key. The filename corresponds to `image_references.url`. The image belongs to the imaged moment, not the observation. For video, the frame is identified by `video_reference_uuid` plus `recorded_timestamp`, `elapsed_time_millis` or `timecode`. | MediaObject |
 | annotation-human-or-machine | Whether the annotation was made by a human, a machine or a combination. It MUST agree with the model fields (see [Rules](#rules)). | `human`, `algorithm`, `combination` | REQUIRED | basisOfRecord: HumanObservation or MachineObservation | | No field. Machine-generated localizations carry a `generator` key in their JSON. | |
-| annotation-detection-model | `model-id` of the model that produced the shape; null if a human drew it | Text or null | REQUIRED (may be null) | | | `generator` key in the localization JSON | |
-| annotation-detection-confidence | The detection model's score for the shape | Number in [0, 1] or null | OPTIONAL; null or absent when the model is null | | | | |
-| annotation-classification-model | `model-id` of the model that produced the label; null if a human chose it | Text or null | REQUIRED (may be null) | identifiedBy (model name) | | `generator`, if the concept was not changed by a human | |
+| annotation-detection-model | `model-id` of the model that produced the shape ([Table 5](#table-5-model-attributes)). Null if a human drew it, or if the shape is `whole-image`. | Text (a `model-id`) or null | REQUIRED (may be null) | | | `generator` key in the localization JSON | |
+| annotation-detection-confidence | The detection model's score for the shape (e.g. objectness) | Number in [0, 1] or null | OPTIONAL; null or absent when the model is null | | | | |
+| annotation-classification-model | `model-id` of the model that produced the label ([Table 5](#table-5-model-attributes)). Null if a human chose it. | Text (a `model-id`) or null | REQUIRED (may be null) | identifiedBy (model name) | | `generator`, if the concept was not changed by a human | |
 | annotation-classification-confidence | The classification model's score for the assigned label | Number in [0, 1] or null | RECOMMENDED when the model is set; null or absent otherwise | | | `confidence` in the localization JSON ÷ 100 | |
-| annotation-classification-alternatives | The model's other top-ranked labels with their scores | List of `{label-name, confidence}` | OPTIONAL | | | | |
+| annotation-classification-alternatives | The model's other top-ranked labels, best first, each with its score. Useful for review and for training. | List of `{label-name, confidence}`; `label-name` is text and `confidence` is a number in [0, 1], both REQUIRED | OPTIONAL | | | | |
 | annotation-human-creators | The people who did the human steps of the annotation | List of `{name, uri}` | REQUIRED unless `annotation-human-or-machine` is `algorithm`; then empty or absent | recordedBy; recordedByID | firstname, lastname; ID of the user who created/attached the annotation label | `observations.observer` (a VARS username, not a name or ORCID) | |
 | annotation-creation-datetime | Date and time the annotation was made | ISO 8601 date-time, UTC | REQUIRED | dateIdentified | Creation date | `observations.observation_timestamp`. **Not** `recorded_timestamp`, which is when the frame was captured and maps to `image-datetime`. | |
 | annotation-label-name | Label assigned to the annotation: a `label-name` from one of the set's label sets | Text | REQUIRED | organismName | Label name | `observations.concept` (knowledgebase concept name, stored as free text) | Label |
@@ -1363,14 +1328,123 @@ snake_case, except `observation_group`, which is `group`.
 | annotation-coordinates | Pixel coordinates of the shape's vertices in the referenced image. The origin (0, 0) is the top-left corner of the image; x is to the right and y is down. See [Annotation shapes and coordinates](#annotation-shapes-and-coordinates). | Array of arrays of numbers, `[[x1, y1, x2, y2, ...]]`; one inner array for a still image | REQUIRED | Derived: ac:xFrac, ac:yFrac, ac:widthFrac, ac:heightFrac, ac:radius | Annotation points | `associations.link_value` JSON, in pixels with origin at top left. Bounding box: `{"x", "y", "width", "height"}`. Other shapes: `{"x": [...], "y": [...]}` | Point, Polygon, x, y, t |
 | annotation-mask | The per-pixel mask, as COCO RLE. Required when the shape is `mask`, and absent otherwise. See [Pixel masks](#pixel-masks). | `{encoding, width, height, counts}` | REQUIRED when the shape is `mask`; absent otherwise | | | Proposed `localizations` columns `mask_encoding`, `mask_data`, `mask_width_pixels`, `mask_height_pixels` | |
 | annotation-measurement | A measurement of the object, in pixels | Number | OPTIONAL | measurementValue | | No dedicated field. Could be an association. | |
-| annotation-reviews | The human reviews of this annotation, oldest first. See [Review provenance](#review-provenance). | List of review entries | OPTIONAL | identifiedBy and dateIdentified after a `modified` review; identificationRemarks | | `verifier` key in the localization JSON → one `accepted` review with no time | |
-| annotation-review-status | The outcome of the latest review | `unreviewed`, `accepted`, `modified`, `rejected`, `uncertain` | REQUIRED if `annotation-reviews` is not empty; otherwise OPTIONAL (absent means `unreviewed`) | identificationVerificationStatus | | `accepted` if `verifier` is present; otherwise `unreviewed` | |
+| annotation-reviews | The human reviews of this annotation, oldest first, with the attributes in [Table 7](#table-7-review-attributes). An empty list or an absent attribute means it has not been reviewed. See [Review provenance](#review-provenance). | List of review entries | OPTIONAL | identifiedBy and dateIdentified after a `modified` review; identificationRemarks | | `verifier` key in the localization JSON → one `accepted` review with no time | |
+| annotation-review-status | The `review-outcome` of the latest review, or `unreviewed` | `unreviewed`, `accepted`, `modified`, `rejected`, `uncertain` | REQUIRED if `annotation-reviews` is not empty; otherwise OPTIONAL (absent means `unreviewed`) | identificationVerificationStatus | | `accepted` if `verifier` is present; otherwise `unreviewed` | |
 | annotation-machine-training-validation | Whether this annotation was used to train or validate a model | `training`, `validation` | OPTIONAL | | | `tags: ["training"]` in some bounding-box JSON. No validation marker. | |
 | annotation-additional-info | Additional comments or observations | Text | OPTIONAL | identificationRemarks or occurrenceRemarks | Additional attributes of the image | `associations` (`link_name \| to_concept \| link_value`), e.g. `audio-comment \| nil \| <text>` | Tags; Comment for annotations (draft shows `ASSOCIATIONS` here, which appears swapped with VARS; SQUIDLE+ authors to confirm) |
 
 VARS observation fields with no attribute in the standard: `activity` (e.g. descent, transect),
 `observation_group` (e.g. ROV, AUV, images), `duration_millis`, the video time indices, and the
 ancillary position and sensor data.
+
+## Table 5. Model attributes
+
+One entry per model version, in `annotation-set-models` (Table 3). Annotations refer to an entry
+by its `model-id`, in `annotation-detection-model` and `annotation-classification-model`
+(Table 4). Added in revision 0.5; see
+[Machine-generated annotations](#machine-generated-annotations-models-and-confidence) for the
+rules. The four `model-training-*` and `model-validation-*` attributes replace the draft's
+set-level `annotation-machine-training-images`, `-training-annotations`, `-validation-images` and
+`-validation-annotations`. Training and validation data belong to each model, not to the set.
+BIIGLE (MAIA) and SQUIDLE+ equivalents are to confirm.
+
+| Attribute name | Description | Allowed value(s) | Level | DarwinCore term | VARS term |
+| --- | --- | --- | --- | --- | --- |
+| model-id | Identifier that annotations use to refer to this entry. Unique within the annotation set. | Text, e.g. `mbari452k_yolov8` | REQUIRED | | `generator` key in the localization JSON (one entry per distinct value) |
+| model-name | Name of the model or architecture | Text, e.g. `YOLOv8m` | REQUIRED | identifiedBy (with `model-version`), when the model chose the label | No field. The exporter uses the `generator` value. |
+| model-version | Version of the trained weights. Use `unknown` only when converting legacy data that did not record it. | Text | REQUIRED | identifiedBy (with `model-name`) | No field. `unknown` unless known. |
+| model-task | What the model produces | `detection`, `classification`, `detection+classification`, `segmentation` | REQUIRED | | No field. Usually `detection+classification`. |
+| model-handle | Persistent link to the weights or the model card (DOI, Hugging Face, FathomNet model zoo, etc.) | URI or DOI | RECOMMENDED | identificationReferences | |
+| model-weights-sha256 | Hash of the weights file, to identify the exact weights | 64 lowercase hexadecimal characters | OPTIONAL | | |
+| model-description | How the model was applied: inference settings, image size, non-maximum suppression (NMS) settings, tiling, post-processing | Text | OPTIONAL | | |
+| model-score-type | What the confidence means, e.g. "softmax class probability", "YOLO objectness × class probability", "calibrated probability" | Text | REQUIRED if any annotation reports a confidence from this model | | No field. Scores are on a 0–100 scale and are divided by 100 on export. |
+| model-confidence-threshold | Minimum score kept; detections below it were discarded. Needed to interpret absences, because anything scored below the threshold is not in the data. | Number in [0, 1] | RECOMMENDED | | |
+| model-label-set-uuid | The label set the model's output classes belong to, if it differs from the annotation set's label set | UUID | OPTIONAL | | |
+| model-training-images | UUID or link to the training images | UUID or URI | RECOMMENDED | | |
+| model-training-annotations | UUID or link to the training annotations | UUID or URI | RECOMMENDED | | |
+| model-validation-images | UUID or link to the validation images | UUID or URI | OPTIONAL | | |
+| model-validation-annotations | UUID or link to the validation annotations | UUID or URI | OPTIONAL | | |
+
+## Table 6. Image attributes
+
+One entry per annotated image, in `annotation-set-images` (Table 3). Annotations refer to an
+entry by its `image-uuid`, in `annotation-image-uuid` (Table 4). Added in revision 0.3, and
+extended in 0.4 and 0.9. See [Referencing the annotated image](#referencing-the-annotated-image)
+for the rules. Names follow iFDO wherever iFDO has the field. BIIGLE and SQUIDLE+ equivalents are
+to confirm.
+
+| Attribute name | Description | Allowed value(s) | Level | iFDO field | DarwinCore / Audubon Core term | VARS term |
+| --- | --- | --- | --- | --- | --- | --- |
+| image-uuid | The UUID of the annotated file. Annotations refer to it with `annotation-image-uuid`. When there is an iFDO, this is the iFDO `image-uuid`. | UUID | REQUIRED | `image-uuid` | dcterms:identifier of the media record | `image_references.uuid` |
+| image-uuid-source | Where the UUID is recorded. `embedded`: in the file's metadata. `assigned`: only outside the file. See [Images without an embedded UUID, or without an iFDO](#images-without-an-embedded-uuid-or-without-an-ifdo). | `embedded`, `assigned` | REQUIRED | | | `assigned`: VARS does not embed UUIDs in files |
+| image-set-uuid | The image set the image belongs to. It MUST be one of the set's `annotation-set-image-set-uuids`. | UUID | REQUIRED if the annotation set references more than one image set; absent when `annotation-set-image-metadata` is `none` | `image-set-uuid` | | No field |
+| image-filename | The image's key in the iFDO `image-set-items` (a filename or relative path), or its original filename when there is no iFDO. For people to read; not for lookup. | Text | RECOMMENDED | key of `image-set-items` | | Last part of `image_references.url` |
+| image-handle | A URI to download the image | URI | REQUIRED when `annotation-set-image-metadata` is `none` or `image-hash-sha256` is null; otherwise OPTIONAL | `image-handle` | ac:accessURI | `image_references.url` |
+| image-hash-sha256 | The SHA-256 hash of the file. Confirms that the coordinates apply to these exact bytes, and links an assigned UUID to its file. | 64 lowercase hexadecimal characters, or null if the bytes cannot be hashed | REQUIRED when `image-uuid-source` is `assigned`; otherwise OPTIONAL | `image-hash-sha256` | | No field. Computed on export. |
+| image-width-pixels | Width of the file in pixels | Integer > 0 | REQUIRED | none (proposed `image-pixel-width`) | exif:PixelXDimension | `image_references.width_pixels` (nullable; fill in on export) |
+| image-height-pixels | Height of the file in pixels | Integer > 0 | REQUIRED | none (proposed `image-pixel-height`) | exif:PixelYDimension | `image_references.height_pixels` (nullable; fill in on export) |
+| image-datetime | When the image was captured, or when a video started. See [Capture time](#capture-time). | ISO 8601 date-time in UTC, e.g. `2026-06-12T03:15:22.000Z` | OPTIONAL when there is an iFDO, and then MUST be the same instant as the iFDO value; RECOMMENDED when `annotation-set-image-metadata` is `none` | `image-datetime` | eventDate | `imaged_moments.recorded_timestamp` |
+
+## Table 7. Review attributes
+
+One entry per review, in an annotation's `annotation-reviews` (Table 4), oldest first. Added in
+revision 0.6. See [Review provenance](#review-provenance) for what each outcome means and for the
+rules. BIIGLE (Largo) and SQUIDLE+ equivalents are to confirm.
+
+| Attribute name | Description | Allowed value(s) | Level | DarwinCore term | VARS term |
+| --- | --- | --- | --- | --- | --- |
+| review-reviewer | The reviewer | `{name, uri}` ([Table 9](#table-9-name-and-uri-object)) | REQUIRED | identifiedBy and identifiedByID, after a `modified` review | `verifier` key in the localization JSON (a username, so `name` only) |
+| review-datetime | When the review was made | ISO 8601 date-time in UTC; null only for legacy data that did not record it | REQUIRED (may be null) | dateIdentified, after a `modified` review | No field, so null. The proposed `localizations` table has `verification_timestamp`. |
+| review-outcome | What the reviewer decided | `accepted`, `modified`, `rejected`, `uncertain` | REQUIRED | identificationVerificationStatus, through `annotation-review-status` | `accepted` when `verifier` is present (assumed; open issue 5) |
+| review-changed | Which parts the reviewer changed | List of `label`, `shape` | REQUIRED if `review-outcome` is `modified`; absent otherwise | | No field |
+| review-previous | The changed attributes' values before this review | Object holding any of `annotation-label-name`, `annotation-shape-name`, `annotation-coordinates`, `annotation-mask`, `annotation-detection-model`, `annotation-detection-confidence`, `annotation-classification-model`, `annotation-classification-confidence` | RECOMMENDED if `review-outcome` is `modified`; absent otherwise | | Earlier concept names are in the Envers audit table `observations_AUD` |
+| review-remarks | Free-text notes, e.g. why an annotation was rejected | Text | OPTIONAL | identificationRemarks | No field |
+
+## Table 8. Mask keys
+
+The keys of the `annotation-mask` object (Table 4), which is REQUIRED when
+`annotation-shape-name` is `mask` and absent otherwise. Added in revision 0.8. See
+[Pixel masks](#pixel-masks) for the encoding rules. Like `{name, uri}`, it is a small object with
+plain keys, so the naming prefixes don't apply.
+
+| Key | Description | Allowed value(s) | Level | COCO term | VARS term (proposed `localizations` table) |
+| --- | --- | --- | --- | --- | --- |
+| encoding | The form of `counts`. More encodings may be added later. | `coco-rle` (a list of integers) or `coco-rle-compressed` (a string) | REQUIRED | Whether `segmentation.counts` is a list or a string | `mask_encoding` (`coco_rle`) |
+| width | Mask width in pixels. MUST equal `image-width-pixels`. | Integer > 0 | REQUIRED | `segmentation.size[1]` | `mask_width_pixels` |
+| height | Mask height in pixels. MUST equal `image-height-pixels`. | Integer > 0 | REQUIRED | `segmentation.size[0]` | `mask_height_pixels` |
+| counts | The run lengths: column-major, starting with background, adding up to width × height | List of non-negative integers (`coco-rle`), or a string (`coco-rle-compressed`) | REQUIRED | `segmentation.counts` | `mask_data` (which form is to confirm) |
+
+## Table 9. Name and URI object
+
+The `{name, uri}` object used for people and named things, as in iFDO. Added in revision 0.7
+(naming rule 5). It is the value of these attributes:
+
+- label sets: `label-set-project`, `label-set-context`, `label-set-creators` (list),
+  `label-set-pi`, `label-set-license`;
+- annotation sets: `annotation-set-project`, `annotation-set-context`, `annotation-set-creators`
+  (list), `annotation-set-pi`, `annotation-set-license`;
+- annotations: `annotation-human-creators` (list);
+- reviews: `review-reviewer`.
+
+| Key | Description | Allowed value(s) | Level | iFDO term |
+| --- | --- | --- | --- | --- |
+| name | Name of the person, project, context or license | Text, not empty | REQUIRED | `name` |
+| uri | Link to details. For a person, an ORCID, or a `mailto:` URI if there is no ORCID. For a license, the license text, e.g. `https://creativecommons.org/licenses/by/4.0/`. | URI | RECOMMENDED for people and licenses; OPTIONAL otherwise | `uri` |
+
+No other keys are allowed.
+
+## Table 10. Top-level containers
+
+The keys at the top level of a file. Added in revision 0.10. See
+[File structure](#file-structure) for the rules. This table comes last so that Tables 1–4 keep the
+draft's numbering, even though the containers come first in a file.
+
+| Key | Contents | Allowed value(s) | Level | Names in the nested form |
+| --- | --- | --- | --- | --- |
+| label-set | One label set: the Table 1 attributes, with its labels (Table 2) in `label-set-labels` | Object | OPTIONAL, but a file MUST have at least one of `label-set` and `annotation-set` | Unchanged |
+| annotation-set | One annotation set: the Table 3 attributes, with its annotations (Table 4) in `annotation-set-annotations`, its images (Table 6) in `annotation-set-images`, and its models (Table 5) in `annotation-set-models` | Object | OPTIONAL, but a file MUST have at least one of `label-set` and `annotation-set` | Unchanged |
+
+No other top-level keys are allowed. They are reserved for later revisions.
 
 ---
 
