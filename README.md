@@ -6,7 +6,7 @@ preparation). The standard describes **label sets**, **annotation sets** and **a
 on marine imagery. It builds on the [image FAIR Digital Object (iFDO)](https://ifdo-schema.org/)
 standard, and maps to Darwin Core and to the VARS, BIIGLE and SQUIDLE+ annotation platforms.
 
-**Status:** draft, revision 0.11. Attribute names, requirement levels and the schema may still
+**Status:** draft, revision 0.12. Attribute names, requirement levels and the schema may still
 change.
 
 ## Contents
@@ -19,6 +19,8 @@ change.
 | [annotation-standard-sample-nested.yaml](annotation-standard-sample-nested.yaml) | The same sample with short nested names, generated from the one above |
 | [annotation-standard-sample-no-ifdo.yaml](annotation-standard-sample-no-ifdo.yaml) | Sample annotation set for images that have no iFDO |
 | [tools/](tools/README.md) | Scripts that validate files against the schema and the standard's other rules |
+| [dwc_alignment.md](dwc_alignment.md) | Exploration notes: how the standard aligns with Darwin Core, and possible changes |
+| [ac_alignment.md](ac_alignment.md) | Exploration notes: how the standard aligns with Audiovisual Core, and possible changes |
 
 ## The standard at a glance
 
@@ -41,6 +43,31 @@ change.
 - [VARS: corrected notes](refined_standard.md#vars-corrected-notes): how VARS (annosaurus)
   actually stores annotations.
 - [Open issues](refined_standard.md#open-issues-for-later-revisions): what is still to be decided.
+
+## Alignment with TDWG standards
+
+Two exploration documents compare every attribute in Tables 1–10 with a TDWG standard. They
+list where the standard already matches and where it doesn't, and suggest changes: corrected
+mappings, possible new attributes and a few renames. They are proposals for discussion; none
+of them has been applied to [refined_standard.md](refined_standard.md) yet.
+
+- [dwc_alignment.md](dwc_alignment.md) compares the standard with the
+  [Darwin Core term list](https://dwc.tdwg.org/terms/), including the Humboldt Extension (`eco:`)
+  Survey terms. Its main findings:
+  - image-based records are always `MachineObservation`;
+  - labels map to `dwc:verbatimIdentification`, not `dwc:organismName`;
+  - annotators are `dwc:identifiedBy`, not `dwc:recordedBy`;
+  - Humboldt terms can record the biological scope and whether absences can be inferred;
+  - `dwc:Assertion` fits model confidences and reviews.
+- [ac_alignment.md](ac_alignment.md) compares the standard with the
+  [Audiovisual Core term list](https://github.com/tdwg/ac/blob/master/docs/termlist/2026-01-23.md)
+  (version 2026-01-23), the TDWG standard for media and regions of interest, formerly Audubon
+  Core. Its main findings:
+  - the region-of-interest rules already match;
+  - AC regions support only rectangles and circles;
+  - AC has terms for the image hash, variant, format, derivation and capture time;
+  - labels map to `ac:CVtermLiteral`, with the label set as the vocabulary;
+  - AC's time terms could support video annotation.
 
 ## Validating a file
 
